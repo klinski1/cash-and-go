@@ -91,7 +91,7 @@ export default function SettingsPage() {
   const handleSave = async () => {
     if (selectedRate && buy && sell && buyModifier !== '' && sellModifier !== '') {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('CashAndgoToken');
         await axios.post(
           `/api/rates/modifiers/update-ticker-modifiers`,
           {
