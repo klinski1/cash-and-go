@@ -33,7 +33,7 @@ export default function SettingsPage() {
     console.log('Fetching rates...');
     const fetchRates = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('CashAndgoToken');
         const response = await axios.get('/api/currencies/get_currencies_data', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -73,7 +73,7 @@ export default function SettingsPage() {
 
   const fetchModifiers = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('CashAndgoToken');
       const response = await axios.get(`/api/rates/modifiers/${code}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
