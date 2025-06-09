@@ -1,5 +1,6 @@
 import LoginPage from './LoginPage';
 import SettingsPage from './SettingsPage';
+import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
@@ -9,7 +10,12 @@ const ProtectedRoute = ({ children }) => {
     navigate('/admin-panel/login', { replace: true });
     return null;
   }
-  return children;
+  return (
+    <>
+      <Header />
+      {children}
+    </>
+  );
 };
 
 const routes = [
