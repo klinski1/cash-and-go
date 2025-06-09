@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const [sellModifier, setSellModifier] = useState('');
   const [initialBuyModifier, setInitialBuyModifier] = useState('');
   const [initialSellModifier, setInitialSellModifier] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // Флаг загрузки
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -34,6 +35,11 @@ export default function SettingsPage() {
     const fetchRates = async () => {
       try {
         const token = localStorage.getItem('CashAndgoToken');
+        if (!token) {
+          console.warn('No token found, redirecting to login');
+          navigate('/login', { replace: true });
+          return;
+        }
         const response = await axios.get('/api/currencies/get_currencies_data', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -41,40 +47,39 @@ export default function SettingsPage() {
         if (data.result && Array.isArray(data.result)) {
           setRates(data.result);
           console.log('Rates loaded:', data.result);
+          if (decodedCode) {
+            const rate = data.result.find((r) => r.code === decodedCode);
+            if (rate) {
+              console.log('Found rate for modal:', rate);
+              setSelectedRate(rate);
+              setBuy(rate.buy.toString());
+              setSell(rate.sell.toString());
+              fetchModifiers();
+              setOpenModal(true); // Открываем модалку сразу после загрузки
+            } else {
+              console.warn(`Rate with code ${decodedCode} not found, redirecting to /`);
+              navigate('/');
+            }
+          }
         } else {
           console.error('Unexpected API response format:', data);
           setRates([]);
         }
       } catch (err) {
         console.error('Error fetching rates:', err);
-        localStorage.removeItem('token');
+        localStorage.removeItem('CashAndgoToken');
         navigate('/login', { replace: true });
+      } finally {
+        setIsLoading(false); // Завершение загрузки
       }
     };
     fetchRates();
-  }, [navigate]);
-
-  useEffect(() => {
-    console.log('Checking code:', decodedCode);
-    if (decodedCode && rates.length > 0) {
-      const rate = rates.find((r) => r.code === decodedCode);
-      if (rate) {
-        console.log('Found rate for modal:', rate);
-        setSelectedRate(rate);
-        setBuy(rate.buy.toString());
-        setSell(rate.sell.toString());
-        fetchModifiers(); // Запрос модификаторов
-      } else {
-        console.warn(`Rate with code ${decodedCode} not found`);
-        navigate('/');
-      }
-    }
-  }, [decodedCode, rates, navigate]);
+  }, [navigate, decodedCode]);
 
   const fetchModifiers = async () => {
     try {
       const token = localStorage.getItem('CashAndgoToken');
-      const response = await axios.get(`/api/rates/modifiers/${code}`, {
+      const response = await axios.get(`/api/rates/modifiers/${decodedCode}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { buy_modifier, sell_modifier } = response.data;
@@ -275,7 +280,7 @@ export default function SettingsPage() {
                 onChange={handleBuyModifierChange}
                 sx={{ mb: 2 }}
                 InputProps={{ inputProps: { step: '0.01' } }}
-                onFocus={() => setSell('')} // Сбрасываем Sell при фокусе на модификаторе
+                onFocus={() => setSell('')}
               />
               <TextField
                 fullWidth
@@ -285,7 +290,7 @@ export default function SettingsPage() {
                 onChange={handleSellModifierChange}
                 sx={{ mb: 2 }}
                 InputProps={{ inputProps: { step: '0.01' } }}
-                onFocus={() => setBuy('')} // Сбрасываем Buy при фокусе на модификаторе
+                onFocus={() => setBuy('')}
               />
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button onClick={handleClose} sx={{ color: '#666' }}>

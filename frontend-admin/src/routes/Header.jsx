@@ -32,6 +32,10 @@ const Header = () => {
       }
     };
 
+    // Немедленный запрос при монтировании
+    refreshToken();
+
+    // Периодический запрос каждые 15 минут
     const interval = setInterval(refreshToken, 900000); // 15 минут = 900000 мс
     return () => clearInterval(interval); // Очистка интервала при размонтировании
   }, [navigate]);
