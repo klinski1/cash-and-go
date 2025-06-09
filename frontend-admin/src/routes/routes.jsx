@@ -1,15 +1,26 @@
 import LoginPage from './LoginPage';
 import SettingsPage from './SettingsPage';
 import Header from './Header';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
-  if (!token) {
-    navigate('/admin-panel/login', { replace: true });
+  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login', { replace: true });
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [token, navigate]);
+
+  if (!isAuthenticated) {
     return null;
   }
+
   return (
     <>
       <Header />
