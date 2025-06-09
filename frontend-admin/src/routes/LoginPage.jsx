@@ -60,7 +60,7 @@ export default function LoginPage() {
         login,
         password,
       });
-      localStorage.setItem('CashAndgoToken', response.data.token);
+      localStorage.setItem('CashAndgoToken', response.data.access_token);
       navigate('/', { replace: true }); // Относительный путь (будет /admin-panel/)
     } catch (err) {
       setErrors({ ...errors, login: 'Invalid credentials', password: '' });
