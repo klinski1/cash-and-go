@@ -19,6 +19,10 @@ export default function SettingsPage() {
   const [selectedRate, setSelectedRate] = useState(null);
   const [buy, setBuy] = useState('');
   const [sell, setSell] = useState('');
+  const [buyModifier, setBuyModifier] = useState('');
+  const [sellModifier, setSellModifier] = useState('');
+  const [initialBuyModifier, setInitialBuyModifier] = useState('');
+  const [initialSellModifier, setInitialSellModifier] = useState('');
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -59,7 +63,7 @@ export default function SettingsPage() {
         setSelectedRate(rate);
         setBuy(rate.buy.toString());
         setSell(rate.sell.toString());
-        setOpenModal(true);
+        fetchModifiers(); // Запрос модификаторов
       } else {
         console.warn(`Rate with code ${decodedCode} not found`);
         navigate('/');
@@ -67,8 +71,25 @@ export default function SettingsPage() {
     }
   }, [decodedCode, rates, navigate]);
 
+  const fetchModifiers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`/api/rates/modifiers/${code}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const { buy_modifier, sell_modifier } = response.data;
+      setInitialBuyModifier(buy_modifier?.toString() || '');
+      setBuyModifier(buy_modifier?.toString() || '');
+      setInitialSellModifier(sell_modifier?.toString() || '');
+      setSellModifier(sell_modifier?.toString() || '');
+      console.log('Modifiers loaded:', { buy_modifier, sell_modifier });
+    } catch (err) {
+      console.error('Error fetching modifiers:', err);
+    }
+  };
+
   const handleSave = async () => {
-    if (selectedRate && buy && sell) {
+    if (selectedRate && buy && sell && buyModifier !== '' && sellModifier !== '') {
       try {
         const token = localStorage.getItem('token');
         await axios.post(
@@ -77,6 +98,8 @@ export default function SettingsPage() {
             code: selectedRate.code,
             buy: parseFloat(buy),
             sell: parseFloat(sell),
+            buy_modifier: parseFloat(buyModifier),
+            sell_modifier: parseFloat(sellModifier),
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -96,7 +119,17 @@ export default function SettingsPage() {
     setSelectedRate(null);
     setBuy('');
     setSell('');
+    setBuyModifier(initialBuyModifier);
+    setSellModifier(initialSellModifier);
     navigate('/');
+  };
+
+  const handleBuyModifierChange = (e) => {
+    setBuyModifier(e.target.value);
+  };
+
+  const handleSellModifierChange = (e) => {
+    setSellModifier(e.target.value);
   };
 
   return (
@@ -222,6 +255,7 @@ export default function SettingsPage() {
                 onChange={(e) => setBuy(e.target.value)}
                 sx={{ mb: 2 }}
                 InputProps={{ inputProps: { step: '0.01' } }}
+                disabled={buyModifier !== initialBuyModifier}
               />
               <TextField
                 fullWidth
@@ -231,6 +265,27 @@ export default function SettingsPage() {
                 onChange={(e) => setSell(e.target.value)}
                 sx={{ mb: 2 }}
                 InputProps={{ inputProps: { step: '0.01' } }}
+                disabled={sellModifier !== initialSellModifier}
+              />
+              <TextField
+                fullWidth
+                label="Модификатор покупки"
+                type="number"
+                value={buyModifier}
+                onChange={handleBuyModifierChange}
+                sx={{ mb: 2 }}
+                InputProps={{ inputProps: { step: '0.01' } }}
+                onFocus={() => setSell('')} // Сбрасываем Sell при фокусе на модификаторе
+              />
+              <TextField
+                fullWidth
+                label="Модификатор продажи"
+                type="number"
+                value={sellModifier}
+                onChange={handleSellModifierChange}
+                sx={{ mb: 2 }}
+                InputProps={{ inputProps: { step: '0.01' } }}
+                onFocus={() => setBuy('')} // Сбрасываем Buy при фокусе на модификаторе
               />
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button onClick={handleClose} sx={{ color: '#666' }}>
