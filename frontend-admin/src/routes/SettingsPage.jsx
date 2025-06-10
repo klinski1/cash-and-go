@@ -280,7 +280,7 @@ export default function SettingsPage() {
                 onChange={handleBuyModifierChange}
                 sx={{ mb: 2 }}
                 InputProps={{ inputProps: { step: '0.01' } }}
-                onFocus={() => setSell('')}
+                // Убрано onFocus={() => setSell('')}
               />
               <TextField
                 fullWidth
@@ -290,7 +290,7 @@ export default function SettingsPage() {
                 onChange={handleSellModifierChange}
                 sx={{ mb: 2 }}
                 InputProps={{ inputProps: { step: '0.01' } }}
-                onFocus={() => setBuy('')}
+                // Убрано onFocus={() => setBuy('')}
               />
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                 <Button onClick={handleClose} sx={{ color: '#666' }}>
