@@ -39,7 +39,7 @@ export default function SettingsPage() {
           navigate('/login', { replace: true });
           return;
         }
-        const response = await axios.get('/currencies/get_currencies_data', {
+        const response = await axios.get('/api/currencies/get_currencies_data', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = response.data;
@@ -82,7 +82,7 @@ export default function SettingsPage() {
   const fetchModifiers = async () => {
     try {
       const token = localStorage.getItem('CashAndgoToken');
-      const response = await axios.get(`/rates/modifiers/${decodedCode}`, {
+      const response = await axios.get(`/api/rates/modifiers/${decodedCode}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { buy_modifier, sell_modifier } = response.data;
@@ -109,32 +109,18 @@ export default function SettingsPage() {
     if (!selectedRate || !data) return;
     try {
       const token = localStorage.getItem('CashAndgoToken');
-      if (data.buy !== undefined && data.sell !== undefined) {
-        // Сохранение прямых значений
-        await axios.post(
-          `/api/rates/update-rates`,
-          {
-            code: selectedRate.code,
-            buy: data.buy,
-            sell: data.sell,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log('Rates updated:', data);
-      } else if (data.buyModifier !== undefined && data.sellModifier !== undefined) {
-        // Сохранение модификаторов
-        await axios.post(
-          `/api/rates/modifiers/update-ticker-modifiers`,
-          {
-            code: selectedRate.code,
-            buy_modifier: data.buyModifier,
-            sell_modifier: data.sellModifier,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log('Modifiers updated:', data);
-      }
-      const response = await axios.get('/currencies/get_currencies_data', {
+      // Используем один эндпоинт для всех случаев
+      await axios.post(
+        '/api/rates/modifiers/update-ticker-modifiers',
+        {
+          code: selectedRate.code,
+          ...(data.buy !== undefined && data.sell !== undefined && { buy: data.buy, sell: data.sell }),
+          ...(data.buyModifier !== undefined && data.sellModifier !== undefined && { buy_modifier: data.buyModifier, sell_modifier: data.sellModifier }),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log('Data saved:', data);
+      const response = await axios.get('/api/currencies/get_currencies_data', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRates(response.data.result);
