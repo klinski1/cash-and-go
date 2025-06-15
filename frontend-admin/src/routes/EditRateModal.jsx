@@ -22,30 +22,38 @@ const EditRateModal = ({
   const [localSellModifier, setLocalSellModifier] = useState(sellModifier || '');
   const [editMode, setEditMode] = useState(false); // false = Прямые значения, true = Модификаторы
   const [hasChanges, setHasChanges] = useState(false);
+  const [savedModifiers, setSavedModifiers] = useState({ buyModifier: initialBuyModifier || '', sellModifier: initialSellModifier || '' });
 
   useEffect(() => {
+    // Обновляем локальные модификаторы при изменении пропсов
     setLocalBuyModifier(buyModifier || '');
     setLocalSellModifier(sellModifier || '');
-    // Проверяем изменения при загрузке или изменении пропсов
+    // Сохраняем начальные модификаторы
+    setSavedModifiers({ buyModifier: initialBuyModifier || '', sellModifier: initialSellModifier || '' });
     checkChanges();
-  }, [buyModifier, sellModifier, buy, sell]);
+  }, [buyModifier, sellModifier, initialBuyModifier, initialSellModifier]);
 
   useEffect(() => {
-    // Проверяем изменения при изменении локальных значений
+    // Восстанавливаем сохранённые модификаторы при переключении в режим модификаторов
+    if (editMode) {
+      setLocalBuyModifier(savedModifiers.buyModifier);
+      setLocalSellModifier(savedModifiers.sellModifier);
+    }
     checkChanges();
-  }, [localBuyModifier, localSellModifier, editMode]);
+  }, [editMode]);
 
   const checkChanges = () => {
     const buyChanged = buy !== selectedRate?.buy.toString();
     const sellChanged = sell !== selectedRate?.sell.toString();
-    const buyModChanged = localBuyModifier !== (initialBuyModifier || '');
-    const sellModChanged = localSellModifier !== (initialSellModifier || '');
+    const buyModChanged = localBuyModifier !== savedModifiers.buyModifier;
+    const sellModChanged = localSellModifier !== savedModifiers.sellModifier;
     setHasChanges(editMode ? (buyModChanged || sellModChanged) : (buyChanged || sellChanged));
   };
 
   const handleSave = () => {
     setBuyModifier(localBuyModifier);
     setSellModifier(localSellModifier);
+    setSavedModifiers({ buyModifier: localBuyModifier, sellModifier: localSellModifier }); // Обновляем сохранённые значения
     onSave();
   };
 
