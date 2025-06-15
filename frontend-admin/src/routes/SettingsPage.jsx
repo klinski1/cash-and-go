@@ -53,7 +53,7 @@ export default function SettingsPage() {
               setSelectedRate(rate);
               setBuy(rate.buy.toString());
               setSell(rate.sell.toString());
-              await fetchModifiers();
+              await fetchModifiers(); // Убеждаемся, что модификаторы загружены
               setOpenModal(true); // Открываем модалку после загрузки
             } else {
               console.warn(`Rate with code ${decodedCode} not found, redirecting to /`);
