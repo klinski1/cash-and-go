@@ -47,8 +47,8 @@ const EditRateModal = ({
 
   useEffect(() => {
     // Проверяем изменения только при изменении значений
-    const buyChanged = buy !== initialValues.buy;
-    const sellChanged = sell !== initialValues.sell;
+    const buyChanged = buy !== initialValues.buy && buy !== '';
+    const sellChanged = sell !== initialValues.sell && sell !== '';
     const buyModChanged = localBuyModifier !== initialValues.buyModifier;
     const sellModChanged = localSellModifier !== initialValues.sellModifier;
     const changes = editMode ? (buyModChanged || sellModChanged) : (buyChanged || sellChanged);
