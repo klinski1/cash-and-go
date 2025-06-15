@@ -22,32 +22,39 @@ const EditRateModal = ({
   const [localSellModifier, setLocalSellModifier] = useState(sellModifier || '');
   const [editMode, setEditMode] = useState(false); // false = Прямые значения, true = Модификаторы
   const [hasChanges, setHasChanges] = useState(false);
-  const [initialBuy, setInitialBuy] = useState(buy);
-  const [initialSell, setInitialSell] = useState(sell);
-  const [initialModBuy, setInitialModBuy] = useState(buyModifier || '');
-  const [initialModSell, setInitialModSell] = useState(sellModifier || '');
+  const [initialValues, setInitialValues] = useState({
+    buy: '',
+    sell: '',
+    buyModifier: '',
+    sellModifier: '',
+  });
 
   useEffect(() => {
     // Устанавливаем начальные значения при открытии
     if (open) {
-      setInitialBuy(buy);
-      setInitialSell(sell);
-      setInitialModBuy(buyModifier || '');
-      setInitialModSell(sellModifier || '');
+      setInitialValues({
+        buy: buy || '',
+        sell: sell || '',
+        buyModifier: buyModifier || '',
+        sellModifier: sellModifier || '',
+      });
       setLocalBuyModifier(buyModifier || '');
       setLocalSellModifier(sellModifier || '');
       setHasChanges(false); // Сбрасываем изменения при новом открытии
+      console.log('Initial values set:', initialValues);
     }
   }, [open, buy, sell, buyModifier, sellModifier]);
 
   useEffect(() => {
-    // Проверяем изменения при изменении значений
-    const buyChanged = buy !== initialBuy;
-    const sellChanged = sell !== initialSell;
-    const buyModChanged = localBuyModifier !== initialModBuy;
-    const sellModChanged = localSellModifier !== initialModSell;
-    setHasChanges(editMode ? (buyModChanged || sellModChanged) : (buyChanged || sellChanged));
-  }, [buy, sell, localBuyModifier, localSellModifier, editMode, initialBuy, initialSell, initialModBuy, initialModSell]);
+    // Проверяем изменения только при изменении значений
+    const buyChanged = buy !== initialValues.buy;
+    const sellChanged = sell !== initialValues.sell;
+    const buyModChanged = localBuyModifier !== initialValues.buyModifier;
+    const sellModChanged = localSellModifier !== initialValues.sellModifier;
+    const changes = editMode ? (buyModChanged || sellModChanged) : (buyChanged || sellChanged);
+    setHasChanges(changes);
+    console.log('Checking changes:', { buyChanged, sellChanged, buyModChanged, sellModChanged, hasChanges: changes });
+  }, [buy, sell, localBuyModifier, localSellModifier, editMode, initialValues]);
 
   const handleSave = () => {
     setBuyModifier(localBuyModifier);
@@ -58,6 +65,8 @@ const EditRateModal = ({
   const handleSwitchChange = (e) => {
     if (!hasChanges) {
       setEditMode(e.target.checked);
+    } else {
+      console.warn('Switch blocked due to unsaved changes');
     }
   };
 
@@ -141,7 +150,7 @@ const EditRateModal = ({
             color="primary"
             sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#1565c0' } }}
             onClick={handleSave}
-            disabled={!hasChanges} // Включаем только при наличии изменений
+            disabled={!hasChanges}
           >
             Сохранить
           </Button>
