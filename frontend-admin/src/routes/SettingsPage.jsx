@@ -7,11 +7,10 @@ import {
   Grid,
   useMediaQuery,
   useTheme,
-  Modal,
-  TextField,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import EditRateModal from './EditRateModal'; // Импортируем новый компонент
 
 export default function SettingsPage() {
   const [rates, setRates] = useState([]);
@@ -54,8 +53,8 @@ export default function SettingsPage() {
               setSelectedRate(rate);
               setBuy(rate.buy.toString());
               setSell(rate.sell.toString());
-              fetchModifiers();
-              setOpenModal(true); // Открываем модалку сразу после загрузки
+              await fetchModifiers();
+              setOpenModal(true); // Открываем модалку после загрузки
             } else {
               console.warn(`Rate with code ${decodedCode} not found, redirecting to /`);
               navigate('/');
@@ -127,14 +126,6 @@ export default function SettingsPage() {
     setBuyModifier(initialBuyModifier);
     setSellModifier(initialSellModifier);
     navigate('/');
-  };
-
-  const handleBuyModifierChange = (e) => {
-    setBuyModifier(e.target.value);
-  };
-
-  const handleSellModifierChange = (e) => {
-    setSellModifier(e.target.value);
   };
 
   return (
@@ -230,83 +221,23 @@ export default function SettingsPage() {
             </Grid>
           )}
 
-          <Modal
+          <EditRateModal
             open={openModal}
             onClose={handleClose}
-            aria-labelledby="edit-rate-modal"
-            aria-describedby="edit-rate-modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: isMobile ? '90%' : 400,
-                bgcolor: 'white',
-                borderRadius: '12px',
-                boxShadow: 24,
-                p: 4,
-              }}
-            >
-              <Typography id="edit-rate-modal" variant="h6" component="h2" sx={{ mb: 2, color: '#333' }}>
-                Редактировать курс для {selectedRate?.code}
-              </Typography>
-              <TextField
-                fullWidth
-                label="Buy"
-                type="number"
-                value={buy}
-                onChange={(e) => setBuy(e.target.value)}
-                sx={{ mb: 2 }}
-                InputProps={{ inputProps: { step: '0.01' } }}
-                disabled={buyModifier !== initialBuyModifier}
-              />
-              <TextField
-                fullWidth
-                label="Sell"
-                type="number"
-                value={sell}
-                onChange={(e) => setSell(e.target.value)}
-                sx={{ mb: 2 }}
-                InputProps={{ inputProps: { step: '0.01' } }}
-                disabled={sellModifier !== initialSellModifier}
-              />
-              <TextField
-                fullWidth
-                label="Модификатор покупки"
-                type="number"
-                value={buyModifier}
-                onChange={handleBuyModifierChange}
-                sx={{ mb: 2 }}
-                InputProps={{ inputProps: { step: '0.01' } }}
-                // Убрано onFocus={() => setSell('')}
-              />
-              <TextField
-                fullWidth
-                label="Модификатор продажи"
-                type="number"
-                value={sellModifier}
-                onChange={handleSellModifierChange}
-                sx={{ mb: 2 }}
-                InputProps={{ inputProps: { step: '0.01' } }}
-                // Убрано onFocus={() => setBuy('')}
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                <Button onClick={handleClose} sx={{ color: '#666' }}>
-                  Отмена
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#1565c0' } }}
-                  onClick={handleSave}
-                >
-                  Сохранить
-                </Button>
-              </Box>
-            </Box>
-          </Modal>
+            selectedRate={selectedRate}
+            buy={buy}
+            setBuy={setBuy}
+            sell={sell}
+            setSell={setSell}
+            buyModifier={buyModifier}
+            setBuyModifier={setBuyModifier}
+            sellModifier={sellModifier}
+            setSellModifier={setSellModifier}
+            initialBuyModifier={initialBuyModifier}
+            initialSellModifier={initialSellModifier}
+            onSave={handleSave}
+            isMobile={isMobile}
+          />
         </Box>
       </Container>
     </Box>

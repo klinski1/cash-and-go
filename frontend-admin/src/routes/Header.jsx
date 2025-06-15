@@ -27,8 +27,8 @@ const Header = () => {
         }
       } catch (err) {
         console.error('Error refreshing token:', err);
-        localStorage.removeItem('token'); // Очистка токена при ошибке
-        navigate('/admin-panel/login', { replace: true });
+        localStorage.removeItem('CashAndgoToken'); // Очистка токена при ошибке
+        navigate('/login', { replace: true });
       }
     };
 
