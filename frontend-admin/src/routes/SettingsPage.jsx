@@ -9,7 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import api from './api'; // Импортируем кастомный axios
+import axios from 'axios';
 import EditRateModal from './EditRateModal'; // Импортируем новый компонент
 
 export default function SettingsPage() {
@@ -39,7 +39,7 @@ export default function SettingsPage() {
           navigate('/login', { replace: true });
           return;
         }
-        const response = await api.get('/currencies/get_currencies_data', {
+        const response = await axios.get('/currencies/get_currencies_data', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = response.data;
@@ -67,8 +67,10 @@ export default function SettingsPage() {
         }
       } catch (err) {
         console.error('Error fetching rates:', err);
-        localStorage.removeItem('CashAndgoToken');
-        navigate('/login', { replace: true });
+        if (err.response && err.response.status === 401) {
+          localStorage.removeItem('CashAndgoToken');
+          navigate('/login', { replace: true });
+        }
       } finally {
         setIsLoading(false); // Завершение загрузки
       }
@@ -79,7 +81,7 @@ export default function SettingsPage() {
   const fetchModifiers = async () => {
     try {
       const token = localStorage.getItem('CashAndgoToken');
-      const response = await api.get(`/rates/modifiers/${decodedCode}`, {
+      const response = await axios.get(`/rates/modifiers/${decodedCode}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { buy_modifier, sell_modifier } = response.data;
@@ -90,6 +92,10 @@ export default function SettingsPage() {
       console.log('Modifiers fetched:', { buy_modifier, sell_modifier });
     } catch (err) {
       console.error('Error fetching modifiers:', err);
+      if (err.response && err.response.status === 401) {
+        localStorage.removeItem('CashAndgoToken');
+        navigate('/login', { replace: true });
+      }
       setInitialBuyModifier('0.00'); // Значение по умолчанию при ошибке
       setBuyModifier('0.00');
       setInitialSellModifier('0.00');
@@ -103,7 +109,7 @@ export default function SettingsPage() {
       const token = localStorage.getItem('CashAndgoToken');
       if (data.buy !== undefined && data.sell !== undefined) {
         // Сохранение прямых значений
-        await api.post(
+        await axios.post(
           `/api/rates/update-rates`,
           {
             code: selectedRate.code,
@@ -115,7 +121,7 @@ export default function SettingsPage() {
         console.log('Rates updated:', data);
       } else if (data.buyModifier !== undefined && data.sellModifier !== undefined) {
         // Сохранение модификаторов
-        await api.post(
+        await axios.post(
           `/api/rates/modifiers/update-ticker-modifiers`,
           {
             code: selectedRate.code,
@@ -126,13 +132,17 @@ export default function SettingsPage() {
         );
         console.log('Modifiers updated:', data);
       }
-      const response = await api.get('/currencies/get_currencies_data', {
+      const response = await axios.get('/currencies/get_currencies_data', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRates(response.data.result);
       setOpenModal(false);
     } catch (err) {
       console.error('Error saving data:', err);
+      if (err.response && err.response.status === 401) {
+        localStorage.removeItem('CashAndgoToken');
+        navigate('/login', { replace: true });
+      }
     }
   };
 
