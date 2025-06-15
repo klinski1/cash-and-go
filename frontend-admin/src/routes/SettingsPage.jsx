@@ -63,11 +63,12 @@ export default function SettingsPage() {
           }
         } else {
           console.error('Unexpected API response format:', data);
-          setRates([]);
+          throw new Error('Invalid response format');
         }
       } catch (err) {
         console.error('Error fetching rates:', err);
-        if (err.response && err.response.status === 401) {
+        if (err.response && (err.response.status === 401 || err.response.data.includes('html'))) {
+          console.log('Detected 401 or HTML response:', err.response.data);
           localStorage.removeItem('CashAndgoToken');
           navigate('/login', { replace: true });
         }
@@ -92,7 +93,8 @@ export default function SettingsPage() {
       console.log('Modifiers fetched:', { buy_modifier, sell_modifier });
     } catch (err) {
       console.error('Error fetching modifiers:', err);
-      if (err.response && err.response.status === 401) {
+      if (err.response && (err.response.status === 401 || err.response.data.includes('html'))) {
+        console.log('Detected 401 or HTML response:', err.response.data);
         localStorage.removeItem('CashAndgoToken');
         navigate('/login', { replace: true });
       }
@@ -139,7 +141,8 @@ export default function SettingsPage() {
       setOpenModal(false);
     } catch (err) {
       console.error('Error saving data:', err);
-      if (err.response && err.response.status === 401) {
+      if (err.response && (err.response.status === 401 || err.response.data.includes('html'))) {
+        console.log('Detected 401 or HTML response:', err.response.data);
         localStorage.removeItem('CashAndgoToken');
         navigate('/login', { replace: true });
       }
