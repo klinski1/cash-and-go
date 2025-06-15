@@ -9,7 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from './api'; // Импортируем кастомный axios
 import EditRateModal from './EditRateModal'; // Импортируем новый компонент
 
 export default function SettingsPage() {
@@ -39,7 +39,7 @@ export default function SettingsPage() {
           navigate('/login', { replace: true });
           return;
         }
-        const response = await axios.get('/api/currencies/get_currencies_data', {
+        const response = await api.get('/currencies/get_currencies_data', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = response.data;
@@ -54,6 +54,7 @@ export default function SettingsPage() {
               setBuy(rate.buy.toString());
               setSell(rate.sell.toString());
               await fetchModifiers(); // Убеждаемся, что модификаторы загружены
+              console.log('Modifiers before modal open:', { buyModifier, sellModifier, initialBuyModifier, initialSellModifier });
               setOpenModal(true); // Открываем модалку после загрузки
             } else {
               console.warn(`Rate with code ${decodedCode} not found, redirecting to /`);
@@ -78,43 +79,60 @@ export default function SettingsPage() {
   const fetchModifiers = async () => {
     try {
       const token = localStorage.getItem('CashAndgoToken');
-      const response = await axios.get(`/api/rates/modifiers/${decodedCode}`, {
+      const response = await api.get(`/rates/modifiers/${decodedCode}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { buy_modifier, sell_modifier } = response.data;
-      setInitialBuyModifier(buy_modifier?.toString() || '');
-      setBuyModifier(buy_modifier?.toString() || '');
-      setInitialSellModifier(sell_modifier?.toString() || '');
-      setSellModifier(sell_modifier?.toString() || '');
-      console.log('Modifiers loaded:', { buy_modifier, sell_modifier });
+      setInitialBuyModifier(buy_modifier?.toString() || '0.00'); // Устанавливаем значение по умолчанию
+      setBuyModifier(buy_modifier?.toString() || '0.00');
+      setInitialSellModifier(sell_modifier?.toString() || '0.00');
+      setSellModifier(sell_modifier?.toString() || '0.00');
+      console.log('Modifiers fetched:', { buy_modifier, sell_modifier });
     } catch (err) {
       console.error('Error fetching modifiers:', err);
+      setInitialBuyModifier('0.00'); // Значение по умолчанию при ошибке
+      setBuyModifier('0.00');
+      setInitialSellModifier('0.00');
+      setSellModifier('0.00');
     }
   };
 
-  const handleSave = async () => {
-    if (selectedRate && buy && sell && buyModifier !== '' && sellModifier !== '') {
-      try {
-        const token = localStorage.getItem('CashAndgoToken');
-        await axios.post(
-          `/api/rates/modifiers/update-ticker-modifiers`,
+  const handleSave = async (data) => {
+    if (!selectedRate || !data) return;
+    try {
+      const token = localStorage.getItem('CashAndgoToken');
+      if (data.buy !== undefined && data.sell !== undefined) {
+        // Сохранение прямых значений
+        await api.post(
+          `/api/rates/update-rates`,
           {
             code: selectedRate.code,
-            buy: parseFloat(buy),
-            sell: parseFloat(sell),
-            buy_modifier: parseFloat(buyModifier),
-            sell_modifier: parseFloat(sellModifier),
+            buy: data.buy,
+            sell: data.sell,
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        const response = await axios.get('/api/currencies/get_currencies_data', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRates(response.data.result);
-        setOpenModal(false);
-      } catch (err) {
-        console.error('Error updating rate:', err);
+        console.log('Rates updated:', data);
+      } else if (data.buyModifier !== undefined && data.sellModifier !== undefined) {
+        // Сохранение модификаторов
+        await api.post(
+          `/api/rates/modifiers/update-ticker-modifiers`,
+          {
+            code: selectedRate.code,
+            buy_modifier: data.buyModifier,
+            sell_modifier: data.sellModifier,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log('Modifiers updated:', data);
       }
+      const response = await api.get('/currencies/get_currencies_data', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRates(response.data.result);
+      setOpenModal(false);
+    } catch (err) {
+      console.error('Error saving data:', err);
     }
   };
 

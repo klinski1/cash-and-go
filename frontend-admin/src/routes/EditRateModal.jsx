@@ -18,8 +18,8 @@ const EditRateModal = ({
   onSave,
   isMobile,
 }) => {
-  const [localBuyModifier, setLocalBuyModifier] = useState(buyModifier || initialBuyModifier || '');
-  const [localSellModifier, setLocalSellModifier] = useState(sellModifier || initialSellModifier || '');
+  const [localBuyModifier, setLocalBuyModifier] = useState(buyModifier || initialBuyModifier || '0.00');
+  const [localSellModifier, setLocalSellModifier] = useState(sellModifier || initialSellModifier || '0.00');
   const [editMode, setEditMode] = useState(false); // false = Прямые значения, true = Модификаторы
   const [hasChanges, setHasChanges] = useState(false);
   const [initialValues, setInitialValues] = useState({
@@ -35,13 +35,13 @@ const EditRateModal = ({
       setInitialValues({
         buy: buy || '',
         sell: sell || '',
-        buyModifier: buyModifier || initialBuyModifier || '',
-        sellModifier: sellModifier || initialSellModifier || '',
+        buyModifier: buyModifier || initialBuyModifier || '0.00',
+        sellModifier: sellModifier || initialSellModifier || '0.00',
       });
-      setLocalBuyModifier(buyModifier || initialBuyModifier || '');
-      setLocalSellModifier(sellModifier || initialSellModifier || '');
+      setLocalBuyModifier(buyModifier || initialBuyModifier || '0.00');
+      setLocalSellModifier(sellModifier || initialSellModifier || '0.00');
       setHasChanges(false); // Сбрасываем изменения при новом открытии
-      console.log('Initial values set:', initialValues);
+      console.log('Initial values set in modal:', initialValues, { buyModifier, sellModifier, initialBuyModifier, initialSellModifier });
     }
   }, [open, buy, sell, buyModifier, sellModifier, initialBuyModifier, initialSellModifier]);
 
@@ -57,9 +57,21 @@ const EditRateModal = ({
   }, [buy, sell, localBuyModifier, localSellModifier, editMode, initialValues]);
 
   const handleSave = () => {
+    const dataToSave = {
+      code: selectedRate?.code,
+    };
+    if (editMode) {
+      dataToSave.buyModifier = parseFloat(localBuyModifier);
+      dataToSave.sellModifier = parseFloat(localSellModifier);
+      console.log('Saving modifiers:', dataToSave);
+    } else {
+      dataToSave.buy = parseFloat(buy);
+      dataToSave.sell = parseFloat(sell);
+      console.log('Saving rates:', dataToSave);
+    }
     setBuyModifier(localBuyModifier);
     setSellModifier(localSellModifier);
-    onSave();
+    onSave(dataToSave); // Передаём данные в родительский компонент
   };
 
   const handleSwitchChange = (e) => {
