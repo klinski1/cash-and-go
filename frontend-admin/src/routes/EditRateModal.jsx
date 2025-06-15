@@ -22,38 +22,36 @@ const EditRateModal = ({
   const [localSellModifier, setLocalSellModifier] = useState(sellModifier || '');
   const [editMode, setEditMode] = useState(false); // false = Прямые значения, true = Модификаторы
   const [hasChanges, setHasChanges] = useState(false);
-  const [savedModifiers, setSavedModifiers] = useState({ buyModifier: initialBuyModifier || '', sellModifier: initialSellModifier || '' });
+  const [initialBuy, setInitialBuy] = useState(buy);
+  const [initialSell, setInitialSell] = useState(sell);
+  const [initialModBuy, setInitialModBuy] = useState(buyModifier || '');
+  const [initialModSell, setInitialModSell] = useState(sellModifier || '');
 
   useEffect(() => {
-    // Обновляем локальные модификаторы при изменении пропсов
-    setLocalBuyModifier(buyModifier || '');
-    setLocalSellModifier(sellModifier || '');
-    // Сохраняем начальные модификаторы
-    setSavedModifiers({ buyModifier: initialBuyModifier || '', sellModifier: initialSellModifier || '' });
-    checkChanges();
-  }, [buyModifier, sellModifier, initialBuyModifier, initialSellModifier]);
-
-  useEffect(() => {
-    // Восстанавливаем сохранённые модификаторы при переключении в режим модификаторов
-    if (editMode) {
-      setLocalBuyModifier(savedModifiers.buyModifier);
-      setLocalSellModifier(savedModifiers.sellModifier);
+    // Устанавливаем начальные значения при открытии
+    if (open) {
+      setInitialBuy(buy);
+      setInitialSell(sell);
+      setInitialModBuy(buyModifier || '');
+      setInitialModSell(sellModifier || '');
+      setLocalBuyModifier(buyModifier || '');
+      setLocalSellModifier(sellModifier || '');
+      setHasChanges(false); // Сбрасываем изменения при новом открытии
     }
-    checkChanges();
-  }, [editMode]);
+  }, [open, buy, sell, buyModifier, sellModifier]);
 
-  const checkChanges = () => {
-    const buyChanged = buy !== selectedRate?.buy.toString();
-    const sellChanged = sell !== selectedRate?.sell.toString();
-    const buyModChanged = localBuyModifier !== savedModifiers.buyModifier;
-    const sellModChanged = localSellModifier !== savedModifiers.sellModifier;
+  useEffect(() => {
+    // Проверяем изменения при изменении значений
+    const buyChanged = buy !== initialBuy;
+    const sellChanged = sell !== initialSell;
+    const buyModChanged = localBuyModifier !== initialModBuy;
+    const sellModChanged = localSellModifier !== initialModSell;
     setHasChanges(editMode ? (buyModChanged || sellModChanged) : (buyChanged || sellChanged));
-  };
+  }, [buy, sell, localBuyModifier, localSellModifier, editMode, initialBuy, initialSell, initialModBuy, initialModSell]);
 
   const handleSave = () => {
     setBuyModifier(localBuyModifier);
     setSellModifier(localSellModifier);
-    setSavedModifiers({ buyModifier: localBuyModifier, sellModifier: localSellModifier }); // Обновляем сохранённые значения
     onSave();
   };
 
@@ -143,7 +141,7 @@ const EditRateModal = ({
             color="primary"
             sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#1565c0' } }}
             onClick={handleSave}
-            disabled={hasChanges}
+            disabled={!hasChanges} // Включаем только при наличии изменений
           >
             Сохранить
           </Button>
