@@ -78,7 +78,7 @@ export default function SettingsPage() {
     try {
       const token = localStorage.getItem('CashAndgoToken');
       await axios.post(
-        '/api/rates/modifiers/update-ticker-modifiers',
+        '/api/rates/update-price-manually',
         {
           code: selectedRate.code,
           buy: data.buy,

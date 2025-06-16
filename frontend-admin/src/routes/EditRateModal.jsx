@@ -12,30 +12,12 @@ const EditRateModal = ({
   onSave,
   isMobile,
 }) => {
-  const [initialBuy, setInitialBuy] = useState('');
-  const [initialSell, setInitialSell] = useState('');
-  const [hasChanges, setHasChanges] = useState(false);
-
   useEffect(() => {
     // Устанавливаем начальные значения при открытии
     if (open) {
-      setInitialBuy(buy || '');
-      setInitialSell(sell || '');
-      setHasChanges(false); // Сбрасываем изменения при новом открытии
-      console.log('Initial values set in modal:', { initialBuy, initialSell });
+      console.log('Modal opened with values:', { buy, sell });
     }
   }, [open, buy, sell]);
-
-  useEffect(() => {
-    // Проверяем изменения только при изменении значений, если модалка открыта
-    if (open) {
-      const buyChanged = buy !== initialBuy;
-      const sellChanged = sell !== initialSell;
-      const changes = buyChanged || sellChanged;
-      setHasChanges(changes);
-      console.log('Checking changes:', { buyChanged, sellChanged, hasChanges: changes });
-    }
-  }, [buy, sell, initialBuy, initialSell, open]);
 
   const handleSave = () => {
     const dataToSave = {
@@ -44,7 +26,7 @@ const EditRateModal = ({
       sell: parseFloat(sell),
     };
     console.log('Saving rates:', dataToSave);
-    onSave(dataToSave); // Передаём данные в родительский компонент
+    onSave(dataToSave); 
   };
 
   return (
@@ -101,7 +83,6 @@ const EditRateModal = ({
             color="primary"
             sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#1565c0' } }}
             onClick={handleSave}
-            disabled={!hasChanges}
           >
             Сохранить
           </Button>
