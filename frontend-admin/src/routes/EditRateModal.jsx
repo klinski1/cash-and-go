@@ -27,10 +27,10 @@ const EditRateModal = ({
   }, [open, buy, sell]);
 
   useEffect(() => {
-    // Проверяем изменения только при изменении значений
-    if (open) { // Проверяем только если модалка открыта
-      const buyChanged = buy !== initialBuy && buy !== '';
-      const sellChanged = sell !== initialSell && sell !== '';
+    // Проверяем изменения только при изменении значений, если модалка открыта
+    if (open) {
+      const buyChanged = buy !== initialBuy;
+      const sellChanged = sell !== initialSell;
       const changes = buyChanged || sellChanged;
       setHasChanges(changes);
       console.log('Checking changes:', { buyChanged, sellChanged, hasChanges: changes });
@@ -78,7 +78,7 @@ const EditRateModal = ({
           fullWidth
           label="Buy"
           type="number"
-          value={buy}
+          value={buy || ''}
           onChange={(e) => setBuy(e.target.value)}
           sx={{ mb: 2 }}
           InputProps={{ inputProps: { step: '0.01' } }}
@@ -87,7 +87,7 @@ const EditRateModal = ({
           fullWidth
           label="Sell"
           type="number"
-          value={sell}
+          value={sell || ''}
           onChange={(e) => setSell(e.target.value)}
           sx={{ mb: 2 }}
           InputProps={{ inputProps: { step: '0.01' } }}
