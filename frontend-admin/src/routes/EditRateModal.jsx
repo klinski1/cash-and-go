@@ -1,4 +1,4 @@
-import { Box, Button, Modal, TextField, Typography, Switch, FormControlLabel } from '@mui/material';
+import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 const EditRateModal = ({
@@ -9,77 +9,40 @@ const EditRateModal = ({
   setBuy,
   sell,
   setSell,
-  buyModifier,
-  setBuyModifier,
-  sellModifier,
-  setSellModifier,
-  initialBuyModifier,
-  initialSellModifier,
   onSave,
   isMobile,
 }) => {
-  const [localBuyModifier, setLocalBuyModifier] = useState(buyModifier || initialBuyModifier || '0.00');
-  const [localSellModifier, setLocalSellModifier] = useState(sellModifier || initialSellModifier || '0.00');
-  const [editMode, setEditMode] = useState(false); // false = Прямые значения, true = Модификаторы
+  const [initialBuy, setInitialBuy] = useState('');
+  const [initialSell, setInitialSell] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
-  const [initialValues, setInitialValues] = useState({
-    buy: '',
-    sell: '',
-    buyModifier: '',
-    sellModifier: '',
-  });
 
   useEffect(() => {
     // Устанавливаем начальные значения при открытии
     if (open) {
-      setInitialValues({
-        buy: buy || '',
-        sell: sell || '',
-        buyModifier: buyModifier || initialBuyModifier || '0.00',
-        sellModifier: sellModifier || initialSellModifier || '0.00',
-      });
-      setLocalBuyModifier(buyModifier || initialBuyModifier || '0.00');
-      setLocalSellModifier(sellModifier || initialSellModifier || '0.00');
+      setInitialBuy(buy || '');
+      setInitialSell(sell || '');
       setHasChanges(false); // Сбрасываем изменения при новом открытии
-      console.log('Initial values set in modal:', initialValues, { buyModifier, sellModifier, initialBuyModifier, initialSellModifier });
+      console.log('Initial values set in modal:', { initialBuy, initialSell });
     }
-  }, [open, buy, sell, buyModifier, sellModifier, initialBuyModifier, initialSellModifier]);
+  }, [open, buy, sell]);
 
   useEffect(() => {
     // Проверяем изменения только при изменении значений
-    const buyChanged = buy !== initialValues.buy && buy !== '';
-    const sellChanged = sell !== initialValues.sell && sell !== '';
-    const buyModChanged = localBuyModifier !== initialValues.buyModifier;
-    const sellModChanged = localSellModifier !== initialValues.sellModifier;
-    const changes = editMode ? (buyModChanged || sellModChanged) : (buyChanged || sellChanged);
+    const buyChanged = buy !== initialBuy && buy !== '';
+    const sellChanged = sell !== initialSell && sell !== '';
+    const changes = buyChanged || sellChanged;
     setHasChanges(changes);
-    console.log('Checking changes:', { buyChanged, sellChanged, buyModChanged, sellModChanged, hasChanges: changes });
-  }, [buy, sell, localBuyModifier, localSellModifier, editMode, initialValues]);
+    console.log('Checking changes:', { buyChanged, sellChanged, hasChanges: changes });
+  }, [buy, sell, initialBuy, initialSell]);
 
   const handleSave = () => {
     const dataToSave = {
       code: selectedRate?.code,
+      buy: parseFloat(buy),
+      sell: parseFloat(sell),
     };
-    if (editMode) {
-      dataToSave.buyModifier = parseFloat(localBuyModifier);
-      dataToSave.sellModifier = parseFloat(localSellModifier);
-      console.log('Saving modifiers:', dataToSave);
-    } else {
-      dataToSave.buy = parseFloat(buy);
-      dataToSave.sell = parseFloat(sell);
-      console.log('Saving rates:', dataToSave);
-    }
-    setBuyModifier(localBuyModifier);
-    setSellModifier(localSellModifier);
+    console.log('Saving rates:', dataToSave);
     onSave(dataToSave); // Передаём данные в родительский компонент
-  };
-
-  const handleSwitchChange = (e) => {
-    if (!hasChanges) {
-      setEditMode(e.target.checked);
-    } else {
-      console.warn('Switch blocked due to unsaved changes');
-    }
   };
 
   return (
@@ -105,54 +68,28 @@ const EditRateModal = ({
         <Typography id="edit-rate-modal" variant="h6" component="h2" sx={{ mb: 2, color: '#333' }}>
           Редактировать курс для {selectedRate?.code}
         </Typography>
-        <FormControlLabel
-          control={<Switch checked={editMode} onChange={handleSwitchChange} disabled={hasChanges} />}
-          label={editMode ? 'Редактировать модификаторы' : 'Редактировать прямые значения'}
+        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+          После сохранения значений дальнейшее ручное редактирование не потребуется — модификаторы будут
+          автоматически рассчитаны на основе этих данных при следующем обновлении.
+        </Typography>
+        <TextField
+          fullWidth
+          label="Buy"
+          type="number"
+          value={buy}
+          onChange={(e) => setBuy(e.target.value)}
           sx={{ mb: 2 }}
+          InputProps={{ inputProps: { step: '0.01' } }}
         />
-        {editMode ? (
-          <>
-            <TextField
-              fullWidth
-              label="Модификатор покупки"
-              type="number"
-              value={localBuyModifier}
-              onChange={(e) => setLocalBuyModifier(e.target.value)}
-              sx={{ mb: 2 }}
-              InputProps={{ inputProps: { step: '0.01' } }}
-            />
-            <TextField
-              fullWidth
-              label="Модификатор продажи"
-              type="number"
-              value={localSellModifier}
-              onChange={(e) => setLocalSellModifier(e.target.value)}
-              sx={{ mb: 2 }}
-              InputProps={{ inputProps: { step: '0.01' } }}
-            />
-          </>
-        ) : (
-          <>
-            <TextField
-              fullWidth
-              label="Buy"
-              type="number"
-              value={buy}
-              onChange={(e) => setBuy(e.target.value)}
-              sx={{ mb: 2 }}
-              InputProps={{ inputProps: { step: '0.01' } }}
-            />
-            <TextField
-              fullWidth
-              label="Sell"
-              type="number"
-              value={sell}
-              onChange={(e) => setSell(e.target.value)}
-              sx={{ mb: 2 }}
-              InputProps={{ inputProps: { step: '0.01' } }}
-            />
-          </>
-        )}
+        <TextField
+          fullWidth
+          label="Sell"
+          type="number"
+          value={sell}
+          onChange={(e) => setSell(e.target.value)}
+          sx={{ mb: 2 }}
+          InputProps={{ inputProps: { step: '0.01' } }}
+        />
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
           <Button onClick={onClose} sx={{ color: '#666' }}>
             Отмена

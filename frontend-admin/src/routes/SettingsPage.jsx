@@ -18,10 +18,6 @@ export default function SettingsPage() {
   const [selectedRate, setSelectedRate] = useState(null);
   const [buy, setBuy] = useState('');
   const [sell, setSell] = useState('');
-  const [buyModifier, setBuyModifier] = useState('');
-  const [sellModifier, setSellModifier] = useState('');
-  const [initialBuyModifier, setInitialBuyModifier] = useState('');
-  const [initialSellModifier, setInitialSellModifier] = useState('');
   const [isLoading, setIsLoading] = useState(true); // Флаг загрузки
   const navigate = useNavigate();
   const theme = useTheme();
@@ -53,8 +49,6 @@ export default function SettingsPage() {
               setSelectedRate(rate);
               setBuy(rate.buy.toString());
               setSell(rate.sell.toString());
-              await fetchModifiers(); // Убеждаемся, что модификаторы загружены
-              console.log('Modifiers before modal open:', { buyModifier, sellModifier, initialBuyModifier, initialSellModifier });
               setOpenModal(true); // Открываем модалку после загрузки
             } else {
               console.warn(`Rate with code ${decodedCode} not found, redirecting to /`);
@@ -79,43 +73,16 @@ export default function SettingsPage() {
     fetchRates();
   }, [navigate, decodedCode]);
 
-  const fetchModifiers = async () => {
-    try {
-      const token = localStorage.getItem('CashAndgoToken');
-      const response = await axios.get(`/api/rates/modifiers/${decodedCode}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const { buy_modifier, sell_modifier } = response.data;
-      setInitialBuyModifier(buy_modifier?.toString() || '0.00'); // Устанавливаем значение по умолчанию
-      setBuyModifier(buy_modifier?.toString() || '0.00');
-      setInitialSellModifier(sell_modifier?.toString() || '0.00');
-      setSellModifier(sell_modifier?.toString() || '0.00');
-      console.log('Modifiers fetched:', { buy_modifier, sell_modifier });
-    } catch (err) {
-      console.error('Error fetching modifiers:', err);
-      if (err.response && (err.response.status === 401 || err.response.data.includes('html'))) {
-        console.log('Detected 401 or HTML response:', err.response.data);
-        localStorage.removeItem('CashAndgoToken');
-        navigate('/login', { replace: true });
-      }
-      setInitialBuyModifier('0.00'); // Значение по умолчанию при ошибке
-      setBuyModifier('0.00');
-      setInitialSellModifier('0.00');
-      setSellModifier('0.00');
-    }
-  };
-
   const handleSave = async (data) => {
     if (!selectedRate || !data) return;
     try {
       const token = localStorage.getItem('CashAndgoToken');
-      // Используем один эндпоинт для всех случаев
       await axios.post(
         '/api/rates/modifiers/update-ticker-modifiers',
         {
           code: selectedRate.code,
-          ...(data.buy !== undefined && data.sell !== undefined && { buy: data.buy, sell: data.sell }),
-          ...(data.buyModifier !== undefined && data.sellModifier !== undefined && { buy_modifier: data.buyModifier, sell_modifier: data.sellModifier }),
+          buy: data.buy,
+          sell: data.sell,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -140,8 +107,6 @@ export default function SettingsPage() {
     setSelectedRate(null);
     setBuy('');
     setSell('');
-    setBuyModifier(initialBuyModifier);
-    setSellModifier(initialSellModifier);
     navigate('/');
   };
 
@@ -246,12 +211,6 @@ export default function SettingsPage() {
             setBuy={setBuy}
             sell={sell}
             setSell={setSell}
-            buyModifier={buyModifier}
-            setBuyModifier={setBuyModifier}
-            sellModifier={sellModifier}
-            setSellModifier={setSellModifier}
-            initialBuyModifier={initialBuyModifier}
-            initialSellModifier={initialSellModifier}
             onSave={handleSave}
             isMobile={isMobile}
           />
