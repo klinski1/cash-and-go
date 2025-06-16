@@ -12,6 +12,12 @@ export const LanguageProvider = ({ children }) => {
     const storedLang = localStorage.getItem("cashAndGoAppLanguage");
     if (storedLang) {
       setLanguage(storedLang);
+    } else {
+      // Если языка нет в localStorage, устанавливаем язык системы/браузера
+      const browserLang = navigator.language || navigator.languages[0] || "en";
+      const defaultLang = browserLang.startsWith("ru") ? "ru" : "en"; // Приоритет ru, если поддерживается
+      setLanguage(defaultLang);
+      localStorage.setItem("cashAndGoAppLanguage", defaultLang);
     }
   }, []);
 

@@ -28,12 +28,14 @@ const EditRateModal = ({
 
   useEffect(() => {
     // Проверяем изменения только при изменении значений
-    const buyChanged = buy !== initialBuy && buy !== '';
-    const sellChanged = sell !== initialSell && sell !== '';
-    const changes = buyChanged || sellChanged;
-    setHasChanges(changes);
-    console.log('Checking changes:', { buyChanged, sellChanged, hasChanges: changes });
-  }, [buy, sell, initialBuy, initialSell]);
+    if (open) { // Проверяем только если модалка открыта
+      const buyChanged = buy !== initialBuy && buy !== '';
+      const sellChanged = sell !== initialSell && sell !== '';
+      const changes = buyChanged || sellChanged;
+      setHasChanges(changes);
+      console.log('Checking changes:', { buyChanged, sellChanged, hasChanges: changes });
+    }
+  }, [buy, sell, initialBuy, initialSell, open]);
 
   const handleSave = () => {
     const dataToSave = {
