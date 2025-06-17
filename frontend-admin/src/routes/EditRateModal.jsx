@@ -21,9 +21,9 @@ const EditRateModal = ({
 
   const handleSave = () => {
     const dataToSave = {
-      code: selectedRate?.code,
-      buy: parseFloat(buy),
-      sell: parseFloat(sell),
+      ticker: selectedRate?.code,
+      new_buy: parseFloat(buy),
+      new_sell: parseFloat(sell),
     };
     console.log('Saving rates:', dataToSave);
     onSave(dataToSave); 
