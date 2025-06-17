@@ -78,11 +78,11 @@ export default function SettingsPage() {
     try {
       const token = localStorage.getItem('CashAndgoToken');
       await axios.post(
-        '/api/rates/update-price-manually',
+        '/api/rates/modifiers/update-ticker-modifiers',
         {
-          code: selectedRate.code,
-          buy: data.buy,
-          sell: data.sell,
+          ticker: selectedRate.code, 
+          new_buy: data.new_buy,    
+          new_sell: data.new_sell,  
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
