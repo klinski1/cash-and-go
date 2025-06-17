@@ -33,8 +33,8 @@ services:
     ports:
       - "5000:5000"
     environment:
-      ADMIN_LOGIN: "6e6r4@admin"
-      ADMIN_PASSWORD: "!Be6r0Nyh0v2281488!$$o$$pi$$o$$ZlpT0kEH!!AAA"
+      ADMIN_LOGIN: "noflyhere@fbrokenglass"
+      ADMIN_PASSWORD: "fBFbK*qM.V_2B00~3+r#g8*yBD=]xhA?u1no@>p"
       JWT_ACCESS_KEY: "fa39f70f820bc7bcf60ef314f134c6cfb29ad6b7d44f7beac31d9dda261b1828"
       JWT_REFRESH_KEY: "fd18f4116af594962aecd6d0524d1de5eff0df09ebc2959411e82b582fc3b04ba4286edbbf49999859b3eb80cbcead34f8738efc22dff886d6259cd16f3f85b9"
       JWT_ALGORITHM: "HS256"
