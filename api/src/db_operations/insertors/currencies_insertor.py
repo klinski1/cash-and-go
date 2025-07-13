@@ -54,7 +54,7 @@ async def save_thb_rates(all_rates, tether: dict):
         for ticker in ["USD", "EUR"]:
             if ticker in all_rates:
                 rate = all_rates[ticker]
-                thb_to_currency = 1 / rate
+                thb_to_currency = rate
                 buy_mod, sell_mod = await get_ticker_coefficients(ticker)
                 if buy_mod and sell_mod:
                     buy_usd_eu = thb_to_currency / buy_mod
