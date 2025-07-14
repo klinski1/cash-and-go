@@ -56,9 +56,17 @@ async def save_thb_rates(all_rates, tether: dict):
                 rate = all_rates[ticker]
                 thb_to_currency = 1 / rate
                 buy_mod, sell_mod = await get_ticker_coefficients(ticker)
+                
+                # Validate modifiers - if they're way off, use defaults
                 if buy_mod and sell_mod:
-                    buy_usd_eu = thb_to_currency / buy_mod
-                    sell_usd_eu = thb_to_currency * sell_mod
+                    # Check if modifiers are reasonable (between 0.5 and 2.0)
+                    if 0.5 <= buy_mod <= 2.0 and 0.5 <= sell_mod <= 2.0:
+                        buy_usd_eu = thb_to_currency / buy_mod
+                        sell_usd_eu = thb_to_currency * sell_mod
+                    else:
+                        logger.warning(f"Invalid {ticker} modifiers detected: buy={buy_mod}, sell={sell_mod}. Using defaults.")
+                        buy_usd_eu = thb_to_currency / (1.01 if ticker == "USD" else 1.0105)
+                        sell_usd_eu = thb_to_currency * (1.0923 if ticker == "USD" else 1.0133)
                 else:
                     buy_usd_eu = thb_to_currency / (1.01 if ticker == "USD" else 1.0105)
                     sell_usd_eu = thb_to_currency * (1.0923 if ticker == "USD" else 1.0133)
