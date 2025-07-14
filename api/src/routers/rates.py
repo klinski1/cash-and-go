@@ -51,8 +51,22 @@ async def update_ticker_modifiers(
         if base_price is None:
             raise HTTPException(404, f"Тикер {data.ticker} не найден или base_price отсутствует")
 
-        new_buy = base_price * data.buy_modifier
-        new_sell = base_price / data.sell_modifier
+        # Рассчитываем новые значения в зависимости от типа валюты
+        if data.ticker in ["RUB(online transfer)", "RUB(cash settlement)", "KZT", "USDT"]:
+            # RUB, KZT, USDT используют прямую логику
+            new_buy = base_price * data.buy_modifier
+            new_sell = base_price / data.sell_modifier
+        elif data.ticker in ["USD", "EUR"]:
+            # USD/EUR используют инвертированную логику с делением для buy
+            # Формула: buy = (1/base_price) / buy_mod, sell = (1/base_price) * sell_mod
+            thb_to_currency = 1 / base_price
+            new_buy = thb_to_currency / data.buy_modifier
+            new_sell = thb_to_currency * data.sell_modifier
+        else:
+            # Остальные валюты используют инвертированную логику
+            thb_to_currency = 1 / base_price
+            new_buy = thb_to_currency * data.buy_modifier
+            new_sell = thb_to_currency * data.sell_modifier
 
         update_rate_in_doc(doc, data.ticker, new_buy, new_sell)
 
@@ -86,9 +100,24 @@ async def update_price_manually(
         if base_price is None:
             raise HTTPException(404, "Тикер не найден или base_price отсутствует")
 
-        # пересчитываем модификаторы
-        buy_mod  = data.new_buy  / base_price
-        sell_mod = base_price / data.new_sell
+        # пересчитываем модификаторы в зависимости от типа валюты
+        if data.ticker in ["RUB(online transfer)", "RUB(cash settlement)", "KZT", "USDT"]:
+            # RUB, KZT, USDT используют прямую логику
+            # Формула: buy = base_price * buy_mod
+            buy_mod = data.new_buy / base_price
+            sell_mod = base_price / data.new_sell
+        elif data.ticker in ["USD", "EUR"]:
+            # USD/EUR используют инвертированную логику с делением для buy
+            # Формула: buy = (1/base_price) / buy_mod, sell = (1/base_price) * sell_mod
+            thb_to_currency = 1 / base_price
+            buy_mod = thb_to_currency / data.new_buy
+            sell_mod = data.new_sell / thb_to_currency
+        else:
+            # Остальные валюты используют инвертированную логику
+            # Формула: buy = (1/base_price) * buy_mod
+            thb_to_currency = 1 / base_price
+            buy_mod = data.new_buy / thb_to_currency
+            sell_mod = data.new_sell / thb_to_currency
 
         await update_ticker_coefficients(data.ticker, buy_mod, sell_mod)
 
