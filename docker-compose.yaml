@@ -25,6 +25,17 @@ services:
     restart: always
     networks:
       - web_network
+    
+  frontend-new:
+    build:
+      context: ./frontend-new  # Новая директория для фронтенда с мобильной версткой
+      dockerfile: Dockerfile  # Используем обновлённый Dockerfile
+    container_name: react_frontend_new
+    restart: always
+    expose:
+      - "4000"  # Экспонируем порт внутри сети
+    networks:
+      - web_network
 
   backend:
     build: ./api

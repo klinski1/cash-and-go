@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Cash&Go Brand Colors */
+  --brand-blue: #004db4;
+  --brand-orange: #f87000;
+  --brand-beige: #f9f9e5;
+  --brand-light-blue: #f0f6ff;
+  --brand-soft-blue: #e6f0fa;
+  --brand-white: #ffffff;
+  --brand-black: #1a1a1a;
+  --brand-gray-light: #f3f4f6;
+  --brand-gray-medium: #6b7280;
+  --brand-gray-dark: #374151;
+  
+  --background: var(--brand-beige);
+  --foreground: var(--brand-black);
+  --card: var(--brand-white);
+  --card-foreground: var(--brand-black);
+  --popover: var(--brand-white);
+  --popover-foreground: var(--brand-black);
+  --primary: var(--brand-blue);
+  --primary-foreground: var(--brand-white);
+  --secondary: var(--brand-gray-light);
+  --secondary-foreground: var(--brand-black);
+  --muted: #ececf0;
+  --muted-foreground: var(--brand-gray-medium);
+  --accent: var(--brand-orange);
+  --accent-foreground: var(--brand-white);
+  --destructive: #dc2626;
+  --destructive-foreground: var(--brand-white);
+  --border: rgba(0, 0, 0, 0.08);
+  --input: transparent;
+  --input-background: var(--brand-white);
+  --switch-background: #cbced4;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --ring: var(--brand-blue);
+  --chart-1: var(--brand-blue);
+  --chart-2: var(--brand-orange);
+  --chart-3: var(--brand-gray-medium);
+  --chart-4: #10b981;
+  --chart-5: #8b5cf6;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: var(--brand-black);
+  --foreground: var(--brand-white);
+  --card: #1f2937;
+  --card-foreground: var(--brand-white);
+  --popover: #1f2937;
+  --popover-foreground: var(--brand-white);
+  --primary: var(--brand-blue);
+  --primary-foreground: var(--brand-white);
+  --secondary: #374151;
+  --secondary-foreground: var(--brand-white);
+  --muted: #374151;
+  --muted-foreground: #9ca3af;
+  --accent: var(--brand-orange);
+  --accent-foreground: var(--brand-white);
+  --border: rgba(255, 255, 255, 0.1);
+  --input: #374151;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Brand specific colors */
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-beige: var(--brand-beige);
+  --color-brand-light-blue: var(--brand-light-blue);
+  --color-brand-soft-blue: var(--brand-soft-blue);
+  --color-brand-white: var(--brand-white);
+  --color-brand-black: var(--brand-black);
+  --color-brand-gray-light: var(--brand-gray-light);
+  --color-brand-gray-medium: var(--brand-gray-medium);
+  --color-brand-gray-dark: var(--brand-gray-dark);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family);
+  }
+}
+
+/**
+ * Cash&Go Typography System - Inter Only
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: 2.5rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    h5 {
+      font-size: 1.125rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    h6 {
+      font-size: 1rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: 1rem;
+      font-weight: var(--font-weight-normal);
+      line-height: 1.6;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: 1rem;
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: 1rem;
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Custom brand utility classes */
+@layer utilities {
+  .text-brand-blue {
+    color: var(--brand-blue);
+  }
+  
+  .text-brand-orange {
+    color: var(--brand-orange);
+  }
+  
+  .bg-brand-blue {
+    background-color: var(--brand-blue);
+  }
+  
+  .bg-brand-orange {
+    background-color: var(--brand-orange);
+  }
+  
+  .bg-brand-beige {
+    background-color: var(--brand-beige);
+  }
+  
+  .bg-brand-light-blue {
+    background-color: var(--brand-light-blue);
+  }
+  
+  .bg-brand-soft-blue {
+    background-color: var(--brand-soft-blue);
+  }
+  
+  .border-brand-blue {
+    border-color: var(--brand-blue);
+  }
+  
+  .border-brand-orange {
+    border-color: var(--brand-orange);
+  }
+  
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
