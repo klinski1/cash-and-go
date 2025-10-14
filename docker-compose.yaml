@@ -27,16 +27,11 @@ services:
       - web_network
     
   frontend-new:
-      build:
-        context: ./frontend-new
-        dockerfile: Dockerfile
+      build: ./frontend-new
       container_name: react_frontend_new
       restart: always
-      volumes:
-        - ./frontend-new/build:/usr/share/nginx/html
       expose:
-        - "4000"
-      command: ["nginx", "-g", "daemon off;"]
+        - "4000" 
       networks:
         - web_network
 
