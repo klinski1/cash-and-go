@@ -30,10 +30,8 @@ services:
       build: ./frontend-new
       container_name: react_frontend_new
       restart: always
-      expose:
-        - "4000" 
       networks:
-        - web_network
+      - web_network
 
   backend:
     build: ./api
