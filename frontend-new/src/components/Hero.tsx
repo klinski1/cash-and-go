@@ -25,7 +25,6 @@ const currenciesFrom = [
   { code: 'USD', name: 'Доллар США', flag: '🇺🇸' },
   { code: 'EUR', name: 'Евро', flag: '🇪🇺' },
   { code: 'THB', name: 'Тайский бат', flag: '🇹🇭' },
-  { code: 'JPY', name: 'Японская иена', flag: '🇯🇵' },
   { code: 'USDT', name: 'Tether USD', flag: '💰' },
 ];
 
@@ -34,7 +33,6 @@ const currenciesTo = [
   { code: 'RUB', name: 'Российский рубль', flag: '🇷🇺' },
   { code: 'USD', name: 'Доллар США', flag: '🇺🇸' },
   { code: 'EUR', name: 'Евро', flag: '🇪🇺' },
-  { code: 'JPY', name: 'Японская иена', flag: '🇯🇵' },
   { code: 'USDT', name: 'Tether USD', flag: '💰' },
 ];
 
@@ -207,20 +205,18 @@ const handleSwitchCurrencies = () => {
   handleConvert(oldAmount, toCurrency, fromCurrency);
 };
 
-// Загрузка курсов (оставляем как есть)
 useEffect(() => {
   const fetchCurrencyRates = async () => {
     try {
       const data = {
         "is_error": false,
         "result": [
-          { "country_code": "ru", "code": "RUB(online transfer)", "buy": 2.706113, "sell": 2.444236 },
-          { "country_code": "ru", "code": "RUB(cash settlement)", "buy": 2.996179, "sell": 2.37792 },
-          { "country_code": "us", "code": "USD", "buy": 32.15054, "sell": 32.802579 },
-          { "country_code": "eu", "code": "EUR", "buy": 37.317911, "sell": 38.066265 },
-          { "country_code": "jp", "code": "JPY", "buy": 0.20706, "sell": 0.220971 },
-          { "country_code": null, "code": "USDT", "buy": 31.52115, "sell": 33.63885 },
-          // ... остальные данные
+          { "code": "RUB(online transfer)", "buy": 2.7061, "sell": 2.4442, "change": +11 },
+          { "code": "RUB(cash settlement)", "buy": 2.9962, "sell": 2.3779, "change": -8 },
+          { "code": "USD",                "buy": 32.1505, "sell": 32.8026, "change": +5 },
+          { "code": "EUR",                "buy": 37.3179, "sell": 38.0663, "change": -12 },
+          { "code": "USDT",               "buy": 31.5212, "sell": 33.6389, "change": +23 },
+          { "code": "THB",                "buy": 1.0000,  "sell": 1.0000,  "change": 0 }
         ],
         "updated": "2025-10-13 15:42:39.472245+07:00"
       };
@@ -246,14 +242,14 @@ useEffect(() => {
   };
 
   return (
-    <section id="hero" className="relative overflow-hidden min-h-[calc(100vh+5rem)] md:min-h-0">
+    <section id="hero" className="relative overflow-x-hidden min-h-[calc(100vh+5rem)] md:min-h-0">
       <div className="absolute inset-0 md:hidden overflow-hidden">
-        <div className="min-h-[calc(100vh+5rem)] w-full">
-          <div className="absolute inset-0 scale-y-[1.6] scale-x-[1.2] origin-top transform">
-            <MobileBackgroundMaskGroup />
-          </div>
-        </div>
-      </div>
+  <div className="min-h-[calc(100vh+5rem)] w-full">
+  <div className="absolute inset-0 scale-[1.6] origin-top">
+  <MobileBackgroundMaskGroup />
+</div>
+  </div>
+</div>
 
       <div className="absolute inset-0 hidden md:block">
         <MaskGroup />
@@ -321,9 +317,9 @@ useEffect(() => {
           className="h-12 pr-24 text-base"
         />
         <Select value={fromCurrency} onValueChange={setFromCurrency}>
-          <SelectTrigger className="absolute right-1 top-1 h-10 w-20 border-0 bg-gray-50">
-            <SelectValue />
-          </SelectTrigger>
+        <SelectTrigger className="absolute right-1 top-1 h-10 w-25 sm:w-28 border-0 bg-gray-100 rounded-r-md shadow-sm">
+          <SelectValue />
+        </SelectTrigger>
           <SelectContent>
             {currenciesFrom.map((currency) => (
               <SelectItem key={currency.code} value={currency.code}>
@@ -362,9 +358,9 @@ useEffect(() => {
           className="h-12 pr-24 bg-gray-50 text-base"
         />
         <Select value={toCurrency} onValueChange={setToCurrency}>
-          <SelectTrigger className="absolute right-1 top-1 h-10 w-20 border-0 bg-gray-100">
-            <SelectValue />
-          </SelectTrigger>
+        <SelectTrigger className="absolute right-1 top-1 h-10 w-25 sm:w-28 border-0 bg-gray-50 rounded-r-md shadow-sm">
+          <SelectValue />
+        </SelectTrigger>
           <SelectContent>
             {currenciesTo.map((currency) => (
               <SelectItem key={currency.code} value={currency.code}>
@@ -428,41 +424,79 @@ useEffect(() => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col">
-              <ScrollArea className="flex-1 px-6" style={{ maxHeight: '280px' }}>
-                <div className="space-y-3 pb-4">
-                  {exchangeRates.map((rate, index) => (
+            <ScrollArea className="flex-1 px-6" style={{ maxHeight: '280px' }}>
+              <div className="space-y-3 pb-4">
+                {exchangeRates.map((rate, index) => {
+                  const change = rate.change || 0;
+                  const isPositive = change > 0;
+                  const isNegative = change < 0;
+                  const absChange = Math.abs(change);
+
+                  return (
                     <div key={index} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      
+                      {/* МОБИЛЬНАЯ ВЕРСИЯ */}
                       <div className="block sm:hidden">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center space-x-2">
-                            <span className="text-base">{currenciesFrom.find(c => c.code === rate.code)?.flag || '💱'}</span>
+                            <span className="text-base">
+                              {currenciesFrom.find(c => c.code === rate.code)?.flag || 'Currency'}
+                            </span>
                             <div className="text-sm font-medium text-gray-900">
                               {rate.code}
                             </div>
                           </div>
-                          <div className="text-xs font-medium px-2 py-1 rounded bg-gray-50">
-                            N/A
+
+                          {/* Треугольник + число — мобилка */}
+                          <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg font-bold text-sm ${
+                            isPositive ? 'bg-green-100 text-green-700' : 
+                            isNegative ? 'bg-red-100 text-red-700' : 
+                            'bg-gray-200 text-gray-600'
+                          }`}>
+                            {change !== 0 ? (
+                              <>
+                                {isPositive && (
+                                  <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none">
+                                    <path d="M10 6 L4 14 L16 14 Z" fill="#16a34a" stroke="#16a34a" strokeWidth="2"/>
+                                  </svg>
+                                )}
+                                {isNegative && (
+                                  <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none">
+                                    <path d="M10 14 L16 6 L4 6 Z" fill="#dc2626" stroke="#dc2626" strokeWidth="2"/>
+                                  </svg>
+                                )}
+                                <span>{isNegative ? '' : '+'}{absChange}</span>
+                              </>
+                            ) : (
+                              <span>—</span>
+                            )}
                           </div>
                         </div>
-                        <div className="flex justify-between">
+
+                        <div className="flex justify-between text-sm">
                           <div className="text-center flex-1">
-                            <div className="text-xs text-gray-600 mb-1">{language === 'ru' ? 'Покупка' : 'Buy'}</div>
-                            <div className="font-semibold text-gray-900 text-sm">{rate.buy.toFixed(5)}</div>
+                            <div className="text-xs text-gray-600 mb-1">Покупка</div>
+                            <div className="font-semibold text-gray-900">{rate.buy.toFixed(5)}</div>
                           </div>
                           <div className="w-px bg-gray-300 mx-3"></div>
                           <div className="text-center flex-1">
-                            <div className="text-xs text-gray-600 mb-1">{language === 'ru' ? 'Продажа' : 'Sell'}</div>
-                            <div className="font-semibold text-gray-900 text-sm">{rate.sell.toFixed(5)}</div>
+                            <div className="text-xs text-gray-600 mb-1">Продажа</div>
+                            <div className="font-semibold text-gray-900">{rate.sell.toFixed(5)}</div>
                           </div>
                         </div>
                       </div>
+
+                      {/* ДЕСКТОПНАЯ ВЕРСИЯ — та, что у тебя уже работает идеально */}
                       <div className="hidden sm:flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <span className="text-lg">{currenciesFrom.find(c => c.code === rate.code)?.flag || '💱'}</span>
+                          <span className="text-lg">
+                            {currenciesFrom.find(c => c.code === rate.code)?.flag || 'Currency'}
+                          </span>
                           <div className="text-sm font-medium text-gray-900">
                             {rate.code}
                           </div>
                         </div>
+
                         <div className="flex items-center space-x-4 text-right">
                           <div>
                             <div className="text-xs text-gray-600">Buy</div>
@@ -473,12 +507,37 @@ useEffect(() => {
                             <div className="font-semibold text-gray-900 text-sm">{rate.sell.toFixed(5)}</div>
                           </div>
 
+                          {/* Вот этот блок у тебя уже работает — оставляем как есть */}
+                          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold ${
+                            isPositive ? 'bg-green-100 text-green-700' : 
+                            isNegative ? 'bg-red-100 text-red-700' : 
+                            'bg-gray-200 text-gray-600'
+                          }`}>
+                            {change !== 0 ? (
+                              <>
+                                {isPositive && (
+                                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 20" fill="none">
+                                    <path d="M10 6 L4 14 L16 14 Z" fill="#16a34a" stroke="#16a34a" strokeWidth="2"/>
+                                  </svg>
+                                )}
+                                {isNegative && (
+                                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 20" fill="none">
+                                    <path d="M10 14 L16 6 L4 6 Z" fill="#dc2626" stroke="#dc2626" strokeWidth="2"/>
+                                  </svg>
+                                )}
+                                <span>{isNegative ? '' : '+'}{absChange}</span>
+                              </>
+                            ) : (
+                              <span>—</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </ScrollArea>
+                  );
+                })}
+              </div>
+            </ScrollArea>
               
               <div className="px-6 pb-4">
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">

@@ -19,7 +19,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-beige">
+    <div className="min-h-screen bg-brand-beige overflow-x-hidden">
       <Header />
       
       <main>
