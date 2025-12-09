@@ -188,6 +188,7 @@
 
   body {
     line-height: inherit;
+    overflow-x: hidden;
   }
 
   hr {
@@ -3955,6 +3956,7 @@
 
 html {
   font-size: var(--font-size);
+  overflow-x: hidden;
 }
 
 @property --tw-translate-x {

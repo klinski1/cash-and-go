@@ -14,17 +14,34 @@ export function MobileQuickActions() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSectionCentered = (id: string) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+  
+    const elementRect = element.getBoundingClientRect();
+    const elementCenter = elementRect.top + elementRect.height / 2;
+    const windowCenter = window.innerHeight / 2;
+  
+    const offset = elementCenter - windowCenter;
+  
+    window.scrollBy({
+      top: offset,
+      behavior: 'smooth'
+    });
+  };
+
+
   const scrollToCalculator = () => {
     const element = document.getElementById('calculator');
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'smooth',   block: 'start' });
     }
   };
 
   const scrollToContacts = () => {
     const element = document.getElementById('contacts');
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'smooth',  block: 'start' });
     }
   };
 
@@ -38,7 +55,7 @@ export function MobileQuickActions() {
             variant="outline"
             size="sm"
             className="flex flex-col items-center justify-center py-2 px-1 h-16 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
-            onClick={scrollToCalculator}
+            onClick={() => scrollToSectionCentered('calculator')}
           >
             <Calculator className="w-4 h-4 mb-1" />
             <span className="text-xs leading-tight">Калькулятор</span>
@@ -48,7 +65,7 @@ export function MobileQuickActions() {
             variant="outline"
             size="sm"
             className="flex flex-col items-center justify-center py-2 px-1 h-16 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
-            onClick={scrollToContacts}
+            onClick={() => scrollToSectionCentered('contacts')}
           >
             <MessageCircle className="w-4 h-4 mb-1" />
             <span className="text-xs leading-tight">Связаться</span>
@@ -57,7 +74,7 @@ export function MobileQuickActions() {
           <Button
             size="sm"
             className="flex flex-col items-center justify-center py-2 px-1 h-16 bg-brand-orange hover:bg-brand-orange/90 text-white"
-            onClick={scrollToCalculator}
+            onClick={() => scrollToSectionCentered('calculator')}
           >
             <ArrowUpDown className="w-4 h-4 mb-1" />
             <span className="text-xs leading-tight">Обменять</span>

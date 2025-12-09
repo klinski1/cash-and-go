@@ -44,28 +44,28 @@ export function TelegramApp() {
   </h2>
 
   {/* Features — тоже с безопасными отступами */}
-  <div className="space-y-5 sm:space-y-6 mb-8 max-w-lg">
-    {features.map((feature, index) => (
-      <div key={index} className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-12 h-12 bg-brand-blue rounded-full flex items-center justify-center">
-          <feature.icon className="w-6 h-6 text-white" />
-        </div>
-        <div className="flex-1">
-          <h3 className="font-semibold text-brand-black text-base sm:text-lg leading-snug">
-            {feature.title}
-          </h3>
-          <p className="text-brand-gray-medium text-sm sm:text-base leading-relaxed mt-1">
-            {feature.description}
-          </p>
-        </div>
+  <div className="space-y-8 sm:space-y-10 mb-12 max-w-lg">
+  {features.map((feature, index) => (
+    <div key={index} className="flex items-start gap-4">
+      <div className="flex-shrink-0 w-12 h-12 bg-brand-blue rounded-full flex items-center justify-center">
+        <feature.icon className="w-6 h-6 text-white" />
       </div>
-    ))}
-  </div>
+      <div className="flex-1">
+        <h3 className="font-semibold text-brand-black text-base sm:text-lg leading-snug">
+          {feature.title}
+        </h3>
+        <p className="text-brand-gray-medium text-sm sm:text-base leading-relaxed mt-1">
+          {feature.description}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
 
   {/* Кнопка */}
   <Button 
     onClick={openTelegram}
-    className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-3 h-auto font-medium transition-all duration-200 shadow-lg hover:shadow-xl text-base"
+    className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-3 h-auto font-medium transition-all duration-200 shadow-lg hover:shadow-xl text-base "
   >
     <MessageCircle className="w-5 h-5 mr-2" />
     Открыть в Telegram

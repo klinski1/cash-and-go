@@ -19,10 +19,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-beige overflow-x-hidden">
+    <div className="bg-brand-beige">
       <Header />
-      
-      <main>
+      <main className="pt-16 lg:pt-20">
         <Hero />
         <CashMethods />
         <TelegramApp />
