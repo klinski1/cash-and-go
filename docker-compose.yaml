@@ -41,7 +41,7 @@ services:
       - "5000:5000"
     environment:
       ADMIN_LOGIN: "noflyhere@fbrokenglass"
-      ADMIN_PASSWORD: "fBFbK*qM.V_2B00~3+r#g8*yBD=]xhA?u1no@>p"
+      ADMIN_PASSWORD: "fBFbK*qM."
       JWT_ACCESS_KEY: "fa39f70f820bc7bcf60ef314f134c6cfb29ad6b7d44f7beac31d9dda261b1828"
       JWT_REFRESH_KEY: "fd18f4116af594962aecd6d0524d1de5eff0df09ebc2959411e82b582fc3b04ba4286edbbf49999859b3eb80cbcead34f8738efc22dff886d6259cd16f3f85b9"
       JWT_ALGORITHM: "HS256"
@@ -58,11 +58,14 @@ services:
     volumes:
       - ./api/data:/api/data
       - ./api/certs:/api/certs
+    extra_hosts:
+      - "mongo_db:172.19.0.2"
     networks:
       - web_network
       - internal_network
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     dns:
       - 8.8.8.8
       - 8.8.4.4
@@ -79,7 +82,12 @@ services:
       - mongo_data:/data/db
     networks:
       - internal_network
-
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
   
   swag:
     image: lscr.io/linuxserver/swag:latest

@@ -1,0 +1,78 @@
+2026-01-25 02:08:01,495:DEBUG:certbot._internal.main:certbot version: 5.2.2
+2026-01-25 02:08:01,495:DEBUG:certbot._internal.main:Location of certbot entry point: /lsiopy/bin/certbot
+2026-01-25 02:08:01,495:DEBUG:certbot._internal.main:Arguments: ['--non-interactive', '--config-dir', '/config/etc/letsencrypt', '--logs-dir', '/config/log/letsencrypt', '--work-dir', '/tmp/letsencrypt', '--config', '/config/etc/letsencrypt/cli.ini']
+2026-01-25 02:08:01,496:DEBUG:certbot._internal.main:Discovered plugins: PluginsRegistry(PluginEntryPoint#certbot-route53:auth,PluginEntryPoint#cpanel,PluginEntryPoint#dns-acmedns,PluginEntryPoint#dns-aliyun,PluginEntryPoint#dns-azure,PluginEntryPoint#dns-bunny,PluginEntryPoint#dns-cloudflare,PluginEntryPoint#dns-desec,PluginEntryPoint#dns-digitalocean,PluginEntryPoint#dns-directadmin,PluginEntryPoint#dns-dnsimple,PluginEntryPoint#dns-dnsmadeeasy,PluginEntryPoint#dns-dnspod,PluginEntryPoint#dns-do,PluginEntryPoint#dns-domeneshop,PluginEntryPoint#dns-dreamhost,PluginEntryPoint#dns-duckdns,PluginEntryPoint#dns-dynu,PluginEntryPoint#dns-freedns,PluginEntryPoint#dns-gandi,PluginEntryPoint#dns-gehirn,PluginEntryPoint#dns-glesys,PluginEntryPoint#dns-godaddy,PluginEntryPoint#dns-google,PluginEntryPoint#dns-he,PluginEntryPoint#dns-hetzner,PluginEntryPoint#dns-infomaniak,PluginEntryPoint#dns-inwx,PluginEntryPoint#dns-ionos,PluginEntryPoint#dns-linode,PluginEntryPoint#dns-loopia,PluginEntryPoint#dns-luadns,PluginEntryPoint#dns-namecheap,PluginEntryPoint#dns-netcup,PluginEntryPoint#dns-njalla,PluginEntryPoint#dns-nsone,PluginEntryPoint#dns-ovh,PluginEntryPoint#dns-porkbun,PluginEntryPoint#dns-rfc2136,PluginEntryPoint#dns-route53,PluginEntryPoint#dns-sakuracloud,PluginEntryPoint#dns-standalone,PluginEntryPoint#dns-transip,PluginEntryPoint#dns-vultr,PluginEntryPoint#manual,PluginEntryPoint#null,PluginEntryPoint#standalone,PluginEntryPoint#webroot)
+2026-01-25 02:08:01,510:DEBUG:certbot._internal.log:Root logging level set at 30
+2026-01-25 02:08:01,511:DEBUG:certbot._internal.display.obj:Notifying user: Processing /config/etc/letsencrypt/renewal/cashandgo.exchange.conf
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var pref_challs=['http-01'] (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var config_dir=/config/etc/letsencrypt (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var logs_dir=/config/log/letsencrypt (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var work_dir=/tmp/letsencrypt (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var server=https://acme-v02.api.letsencrypt.org/directory (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var server=https://acme-v02.api.letsencrypt.org/directory (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot.configuration:Var account={'server'} (set by user).
+2026-01-25 02:08:01,513:DEBUG:certbot._internal.plugins.selection:Requested authenticator standalone and installer None
+2026-01-25 02:08:01,546:DEBUG:acme.client:Sending GET request to https://acme-v02.api.letsencrypt.org/directory.
+2026-01-25 02:08:02,273:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Sat, 24 Jan 2026 23:08:02 GMT
+Content-Type: application/json
+Content-Length: 1033
+Connection: keep-alive
+Cache-Control: public, max-age=0, no-cache
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "TYI7f5NqKCk": "https://community.letsencrypt.org/t/adding-random-entries-to-the-directory/33417",
+  "keyChange": "https://acme-v02.api.letsencrypt.org/acme/key-change",
+  "meta": {
+    "caaIdentities": [
+      "letsencrypt.org"
+    ],
+    "profiles": {
+      "classic": "https://letsencrypt.org/docs/profiles#classic",
+      "shortlived": "https://letsencrypt.org/docs/profiles#shortlived",
+      "tlsclient": "https://letsencrypt.org/docs/profiles#tlsclient",
+      "tlsserver": "https://letsencrypt.org/docs/profiles#tlsserver"
+    },
+    "termsOfService": "https://letsencrypt.org/documents/LE-SA-v1.6-August-18-2025.pdf",
+    "website": "https://letsencrypt.org"
+  },
+  "newAccount": "https://acme-v02.api.letsencrypt.org/acme/new-acct",
+  "newNonce": "https://acme-v02.api.letsencrypt.org/acme/new-nonce",
+  "newOrder": "https://acme-v02.api.letsencrypt.org/acme/new-order",
+  "renewalInfo": "https://acme-v02.api.letsencrypt.org/acme/renewal-info",
+  "revokeCert": "https://acme-v02.api.letsencrypt.org/acme/revoke-cert"
+}
+2026-01-25 02:08:02,274:DEBUG:acme.client:Sending GET request to https://acme-v02.api.letsencrypt.org/acme/renewal-info/rkie3IcdRKBv2qLlYHQEeMKcAIA.BTVZeULBUNvVi7Cmj8mQBicU.
+2026-01-25 02:08:02,509:DEBUG:acme.client:Received response:
+HTTP 200
+Server: nginx
+Date: Sat, 24 Jan 2026 23:08:02 GMT
+Content-Type: application/json
+Content-Length: 101
+Connection: keep-alive
+Cache-Control: public, max-age=0, no-cache
+Link: <https://acme-v02.api.letsencrypt.org/directory>;rel="index"
+Retry-After: 21600
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=604800
+
+{
+  "suggestedWindow": {
+    "start": "2026-03-06T19:03:11Z",
+    "end": "2026-03-08T14:14:01Z"
+  }
+}
+2026-01-25 02:08:02,511:INFO:certbot.ocsp:Cannot extract OCSP URI from /config/etc/letsencrypt/archive/cashandgo.exchange/cert1.pem
+2026-01-25 02:08:02,511:DEBUG:certbot._internal.display.obj:Notifying user: Certificate not yet due for renewal
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.plugins.selection:Requested authenticator standalone and installer None
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.display.obj:Notifying user: 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.display.obj:Notifying user: The following certificates are not due for renewal yet:
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.display.obj:Notifying user:   /config/etc/letsencrypt/live/cashandgo.exchange/fullchain.pem expires on 2026-04-06 (skipped)
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.display.obj:Notifying user: No renewals were attempted.
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.display.obj:Notifying user: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+2026-01-25 02:08:02,512:DEBUG:certbot._internal.renewal:no renewal failures

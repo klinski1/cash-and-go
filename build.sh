@@ -15,19 +15,19 @@ if [ "$DISK_USAGE" -ge 90 ]; then
 fi
 
 echo -e "${GREEN}Останавливаем и удаляем все контейнеры...${NC}"
-docker-compose down
+docker compose down
 
 echo -e "${GREEN}Очищаем неиспользуемые образы, сети и кэш...${NC}"
 docker system prune -a -f --volumes
 
 echo -e "${GREEN}Выполняем пересборку образов...${NC}"
-docker-compose build --no-cache
+docker compose build --no-cache
 
 echo -e "${GREEN}Запускаем сервисы...${NC}"
-docker-compose up -d
+docker compose up -d
 
 echo -e "${GREEN}Проверяем статус контейнеров...${NC}"
-docker-compose ps -a
+docker compose ps -a
 
 echo -e "${GREEN}Текущее использование места Docker...${NC}"
 docker system df

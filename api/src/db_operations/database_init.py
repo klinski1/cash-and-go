@@ -46,7 +46,7 @@ async def main():
 
         initializer = DBInitializer(client.db)
         await initializer.init_collections(["users", "tokens"])
-        await initializer.ensure_admin_user(login=admin_login, password=admin_password)
+      #  await initializer.ensure_admin_user(login=admin_login, password=admin_password)
         await init_ticker_modifiers()
         
         # Fix any invalid modifiers
