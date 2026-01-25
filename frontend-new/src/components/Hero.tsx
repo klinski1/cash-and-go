@@ -268,7 +268,7 @@ useEffect(() => {
     try {
       const response = await fetch("/api/currencies/get_currencies_data");
       const data = await response.json();
-      setExchangeRates(data.result.currency || []);
+      setExchangeRates(data.result || []); 
     } catch (error) {
       console.error('Error fetching currency rates:', error);
     }
