@@ -195,12 +195,12 @@ export function Hero() {
         const response = await fetch("/api/currencies/get_currencies_data");
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
-  
+
         console.log("Полный ответ API:", data);
-        const rates = data.result || []; 
+        const rates = data.result || [];
         setExchangeRates(rates);
-  
-        console.log("Установленные курсы:", rates); 
+
+        console.log("Установленные курсы:", rates);
       } catch (error) {
         console.error('Error fetching currency rates:', error);
       }
@@ -503,8 +503,8 @@ export function Hero() {
                             </div>
 
                             <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg font-bold text-sm ${isPositive ? 'bg-green-100 text-green-700' :
-                                isNegative ? 'bg-red-100 text-red-700' :
-                                  'bg-gray-200 text-gray-600'
+                              isNegative ? 'bg-red-100 text-red-700' :
+                                'bg-gray-200 text-gray-600'
                               }`}>
                               {change !== 0 ? (
                                 <>
@@ -563,8 +563,8 @@ export function Hero() {
                             </div>
 
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold ${isPositive ? 'bg-green-100 text-green-700' :
-                                isNegative ? 'bg-red-100 text-red-700' :
-                                  'bg-gray-200 text-gray-600'
+                              isNegative ? 'bg-red-100 text-red-700' :
+                                'bg-gray-200 text-gray-600'
                               }`}>
                               {change !== 0 ? (
                                 <>
@@ -591,8 +591,8 @@ export function Hero() {
                   })}
                 </div>
               </ScrollArea>
-
-              <div className="px-6 pb-4">
+              <div className="flex-grow" />
+              <div className="px-6 mt-auto">
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="text-sm text-blue-800">
                     <strong>{language === 'ru' ? 'Обновлено:' : 'Updated:'}</strong> {new Date().toLocaleTimeString('ru-RU')} BKK

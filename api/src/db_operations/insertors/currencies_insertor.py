@@ -2,7 +2,11 @@ import pytz
 from datetime import datetime
 from loguru import logger
 from src.settings.client import MongoDBClient
+from zoneinfo import ZoneInfo
 from src.db_operations.extractors.modifier_extractor import get_ticker_coefficients
+from src.db_operations.insertors.currencies_insertor import MongoDBClient
+
+BANGKOK_TZ = ZoneInfo("Asia/Bangkok")
 
 async def save_thb_rates(all_rates, tether: dict):
     if not all_rates:
@@ -114,3 +118,48 @@ async def save_thb_rates(all_rates, tether: dict):
         if results:
             await collection.insert_one(document_to_insert)
             logger.info(f"Курсы успешно обновлены. Всего валют: {len(results)}")
+
+
+async def get_or_create_daily_start_rates(current_rates):
+    """
+    Возвращает курсы на начало текущего дня (BKK).
+    Если за сегодня нет — создаёт из текущих курсов.
+    """
+    async with MongoDBClient() as mongo:
+        collection = await mongo.get_collection("daily_start_rates")
+
+        today = datetime.now(BANGKOK_TZ).date().isoformat()  # "2024-01-17"
+
+        existing = await collection.find_one({"date": today})
+
+        if existing:
+            return existing["rates"]
+
+        # Нет — сохраняем текущие как начало дня
+        daily_doc = {
+            "date": today,
+            "timestamp": datetime.now(BANGKOK_TZ),
+            "rates": current_rates  
+        }
+
+        await collection.insert_one(daily_doc)
+        return current_rates
+    
+
+
+def calculate_change(current, start):
+    """
+    Считает изменение в процентах по полю buy (можно поменять на sell).
+    Возвращает float (например 2.34 или -1.56).
+    """
+    if not start:
+        return 0.0
+
+    old_buy = start.get("buy", 0)
+    new_buy = current.get("buy", 0)
+
+    if old_buy == 0:
+        return 0.0
+
+    change = ((new_buy - old_buy) / old_buy) * 100
+    return round(change, 2)
