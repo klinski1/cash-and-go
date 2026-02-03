@@ -17,6 +17,7 @@ async def currencies_extr():
             {
                 "country_code": country_codes.get(rate["quotecurrency"], "Unknown"),
                 "code": rate["quotecurrency"],
+                "name": rate["quotecurrency"],
                 "buy": rate.get("buy", 0),
                 "sell": rate.get("sell", 0)
             }

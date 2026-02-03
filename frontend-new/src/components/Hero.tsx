@@ -324,7 +324,6 @@ export function Hero() {
                     className="h-12 pr-24 text-base"
                   />
                   <Select value={fromCurrency} onValueChange={setFromCurrency}>
-                    {/* ТРИГГЕР — С РАБОЧИМИ ФЛАГАМИ */}
                     <SelectTrigger className="absolute right-1 top-1 h-10 w-25 sm:w-28 border-0 bg-gray-100 rounded-r-md shadow-sm pr-8">
                       <div className="flex items-center gap-2">
                         <img
@@ -336,13 +335,12 @@ export function Hero() {
                       </div>
                     </SelectTrigger>
 
-                    {/* СПИСОК — У ТЕБЯ УЖЕ РАБОТАЕТ */}
                     <SelectContent>
                       {currenciesFrom.map((currency) => (
                         <SelectItem key={currency.code} value={currency.code}>
                           <div className="flex items-center gap-2">
                             <img
-                              src={`${import.meta.env.BASE_URL}flags/${currency.code === 'USDT' ? 'usdt.png' : currency.code.toLowerCase() + '.svg'}`}
+                              src={`${import.meta.env.BASE_URL}flags/${currency.code === 'USDT' ? 'usd.svg' : currency.code.toLowerCase() + '.svg'}`}
                               alt={currency.code}
                               className="w-7 h-5 rounded-sm object-contain"
                               onError={(e) => console.log('Ошибка флага:', e.currentTarget.src)}
@@ -472,18 +470,29 @@ export function Hero() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 flex-1 flex flex-col">
-              <ScrollArea className="flex-1 px-6" style={{ maxHeight: '280px' }}>
+              <ScrollArea className="flex-1 px-6" style={{ maxHeight: '300px' }}>
                 <div className="space-y-3 pb-4">
-                  {exchangeRates.map((rate) => {
+                {exchangeRates.map((rate) => {
                     const change = rate.change || 0;
                     const isPositive = change > 0;
                     const isNegative = change < 0;
                     const absChange = Math.abs(change);
 
-                    // Флаг по country_code — если null → USDT
+                    // ─── Логика отображения кода валюты ───
+                    let displayCode = rate.code;
+
+                    // Если содержит RUB → оставляем только RUB
+                    if (rate.code.toUpperCase().includes('RUB')) {
+                      displayCode = 'RUB';
+                    }
+                    // Специальная обработка USDT
+                    else if (rate.code.toUpperCase() === 'USDT') {
+                        displayCode = 'USDe'; 
+                    }
+
                     const flagSrc = rate.country_code
                       ? `${import.meta.env.BASE_URL}flags/${rate.country_code.toLowerCase()}.svg`
-                      : `${import.meta.env.BASE_URL}flags/usdt.png`;
+                      : `${import.meta.env.BASE_URL}flags/usd.svg`;
 
                     return (
                       <div key={rate.code} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -498,7 +507,7 @@ export function Hero() {
                                 className="w-9 h-6 rounded object-cover shadow-sm"
                               />
                               <div className="text-sm font-medium text-gray-900 leading-tight">
-                                {rate.code}
+                                {displayCode}
                               </div>
                             </div>
 
@@ -548,7 +557,7 @@ export function Hero() {
                               className="w-10 h-7 rounded object-cover shadow-sm"
                             />
                             <div className="text-sm font-medium text-gray-900 leading-tight">
-                              {rate.code}
+                              {displayCode}
                             </div>
                           </div>
 
