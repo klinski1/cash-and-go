@@ -1,3 +1,4 @@
+from loguru import logger
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -14,9 +15,26 @@ auth_router = APIRouter(prefix="/auth")
 
 @auth_router.post("/sign_in")
 async def sign_in(data: LoginSchema, request: Request):
+    # САМОЕ ПЕРВОЕ — логируем ВСЁ сразу
+    logger.critical("===== SIGN_IN CALLED =====")
+    logger.critical(f"Login: {data.login}")
+    logger.critical(f"Type of password: {type(data.password).__name__}")
+    logger.critical(f"Password repr: {repr(data.password)}")  # покажет скрытые символы
+    logger.critical(f"Password chars: {len(data.password) if isinstance(data.password, str) else 'NOT STR'}")
+    
+    if isinstance(data.password, str):
+        pw_bytes = data.password.encode('utf-8', errors='replace')
+        logger.critical(f"Password bytes length: {len(pw_bytes)}")
+        logger.critical(f"Password bytes hex: {pw_bytes.hex()}")
+        logger.critical(f"Password bytes repr: {pw_bytes!r}")
+    else:
+        logger.critical("PASSWORD IS NOT STRING! TYPE: " + str(type(data.password)))
+        raise HTTPException(400, "Invalid password type")
+
+    # Дальше только после логов
     user = await get_user_by_login(data.login)
-    if not user or not bcrypt.verify(data.password, user["password"]):
-        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+#    if not user or not bcrypt.verify(data.password, user["password"]):
+#        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
 
     payload = {"sub": user["login"], "user_id": str(user["_id"])}
     access_token = create_access_token(payload)

@@ -1,0 +1,69 @@
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
+
+from src.routers.currencies import currencies_router, scheduler, scheduled_thb_exchange_rate, load_flags_data
+from src.routers.auth import auth_router
+from src.routers.rates import rates
+
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # ─── Startup ────────────────────────────────────────────────────────────────
+    logger.info("Application startup: initializing scheduler and flags")
+
+    try:
+        # Первое обновление курсов при старте
+        await scheduled_thb_exchange_rate()
+
+        # Планируем повтор каждые 30 минут
+        scheduler.add_job(
+            scheduled_thb_exchange_rate,
+            'interval',
+            minutes=30,
+            id='thb_rates_update',
+            replace_existing=True
+        )
+
+        if not scheduler.running:
+            scheduler.start()
+            logger.info("APScheduler started")
+
+        # Загрузка флагов
+        await load_flags_data()
+        logger.info("Flags data loaded successfully")
+
+    except Exception as e:
+        logger.exception("Error during startup initialization")
+        # Можно решить — завершать приложение или продолжать
+        # raise  # ← если хочешь краш при старте
+        # или просто лог и продолжаем
+
+    yield
+
+    # ─── Shutdown ───────────────────────────────────────────────────────────────
+    logger.info("Application shutdown: stopping scheduler")
+    try:
+        scheduler.shutdown(wait=False)
+    except Exception as e:
+        logger.exception("Error during scheduler shutdown")
+
+
+# Создаём приложение с lifespan
+app = FastAPI(root_path="/api", lifespan=lifespan)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://cashandgo.exchange", "*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(currencies_router)
+app.include_router(auth_router)
+app.include_router(rates)

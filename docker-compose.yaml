@@ -39,6 +39,7 @@ services:
     restart: always
     ports:
       - "5000:5000"
+    command: uvicorn main:app --host 0.0.0.0 --port 5000 --log-level debug
     environment:
       ADMIN_LOGIN: "noflyhere@fbrokenglass"
       ADMIN_PASSWORD: "fBFbK*qM."
@@ -58,8 +59,6 @@ services:
     volumes:
       - ./api/data:/api/data
       - ./api/certs:/api/certs
-    extra_hosts:
-      - "mongo_db:172.19.0.2"
     networks:
       - web_network
       - internal_network
@@ -78,6 +77,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=CashAndGo
       - MONGO_INITDB_ROOT_PASSWORD=2093100Tbm
       - MONGO_INITDB_DATABASE=CashAndGoDB
+    command: mongod --bind_ip_all
     volumes:
       - mongo_data:/data/db
     networks:
@@ -95,8 +95,8 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      - PUID=0      
-      - PGID=0
+      - PUID=1000      
+      - PGID=1000
       - TZ=Europe/Moscow  
       - URL=cashandgo.exchange
       - SUBDOMAINS=www
@@ -122,7 +122,6 @@ networks:
     driver: bridge
   internal_network:
     name: internal_network
-    internal: true
 
 volumes:
   mongo_data:

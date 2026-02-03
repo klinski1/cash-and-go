@@ -1,7 +1,41 @@
 <------------------------------------------------->
 
 <------------------------------------------------->
-cronjob running on Sun Jan 25 02:08:00 MSK 2026
+cronjob running on Sun Feb  1 02:08:00 MSK 2026
+Running certbot renew
+Saving debug log to /config/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Processing /config/etc/letsencrypt/renewal/cashandgo.exchange.conf
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Certificate not yet due for renewal
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+The following certificates are not due for renewal yet:
+  /config/etc/letsencrypt/live/cashandgo.exchange/fullchain.pem expires on 2026-04-06 (skipped)
+No renewals were attempted.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<------------------------------------------------->
+
+<------------------------------------------------->
+cronjob running on Mon Feb  2 02:08:01 MSK 2026
+Running certbot renew
+Saving debug log to /config/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Processing /config/etc/letsencrypt/renewal/cashandgo.exchange.conf
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Certificate not yet due for renewal
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+The following certificates are not due for renewal yet:
+  /config/etc/letsencrypt/live/cashandgo.exchange/fullchain.pem expires on 2026-04-06 (skipped)
+No renewals were attempted.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<------------------------------------------------->
+
+<------------------------------------------------->
+cronjob running on Tue Feb  3 02:08:00 MSK 2026
 Running certbot renew
 Saving debug log to /config/log/letsencrypt/letsencrypt.log
 

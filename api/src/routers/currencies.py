@@ -6,28 +6,19 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from src.utils.scheduler_service import scheduled_thb_exchange_rate
 from src.utils.currency_service import load_flags_data
 from src.db_operations.extractors.currencies_extractor import currencies_extr
-from src.db_operations.insertors.currencies_insertor import get_or_create_daily_start_rates, calculate_change
+from src.db_operations.insertors.currencies_insertor import (
+    get_or_create_daily_start_rates,
+    calculate_change
+)
 
+# Создаём планировщик на уровне модуля (один на приложение)
 scheduler = AsyncIOScheduler()
 
 currencies_router = APIRouter(
-    prefix="/currencies"
+    prefix="/currencies",
+    tags=["currencies"]
 )
 
-@currencies_router.on_event("startup")
-async def start_scheduler():
-    """
-    Функция запускается при старте приложения.
-    Запускает планировщик задач.
-    """
-
-    await scheduled_thb_exchange_rate()
-
-    scheduler.add_job(scheduled_thb_exchange_rate, 'interval', minutes=30)  # Запускать каждые 30 минут
-    if not scheduler.running:
-        scheduler.start()
-
-    await load_flags_data()
 
 @currencies_router.get('/get_currencies_data')
 async def get_currencies_data(request: Request):
@@ -35,13 +26,13 @@ async def get_currencies_data(request: Request):
     logger.debug(f"request body: {request_body}")
 
     try:
-        # Получаем текущие курсы (твоя функция)
+        # Получаем текущие курсы
         result = await currencies_extr()
 
         # Получаем курсы начала дня (один раз в сутки сохраняются)
         daily_start = await get_or_create_daily_start_rates(result["result"])
 
-        # Добавляем поле change к каждому элементу массива result
+        # Добавляем поле change к каждому элементу
         for rate in result["result"]:
             start_rate = next((r for r in daily_start if r["code"] == rate["code"]), None)
             rate["change"] = calculate_change(rate, start_rate)
@@ -49,5 +40,8 @@ async def get_currencies_data(request: Request):
         return result
 
     except Exception as e:
-        logger.exception(f"An unexpected error occurred while fetching currency data. {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to fetch currency data. {e}")
+        logger.exception(f"Unexpected error while fetching currency data: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch currency data: {str(e)}"
+        )

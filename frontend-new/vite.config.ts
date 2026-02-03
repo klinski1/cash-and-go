@@ -4,7 +4,7 @@
   import path from 'path';
 
   export default defineConfig({
-    base: '/frontend-redesign/',
+    base: '/',
     assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.webp'],
     plugins: [react()],
     resolve: {
